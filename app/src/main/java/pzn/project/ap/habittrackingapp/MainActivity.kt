@@ -945,10 +945,12 @@ fun QuickStatCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .background(gradient)
-                .padding(20.dp)
+                .padding(20.dp),
+            contentAlignment = Alignment.Center
         ) {
             Column(
-                horizontalAlignment = Alignment.CenterHorizontally
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
                 Icon(
                     imageVector = icon,
@@ -956,20 +958,22 @@ fun QuickStatCard(
                     modifier = Modifier.size(28.dp),
                     tint = Color.White
                 )
-                
+
                 Spacer(modifier = Modifier.height(12.dp))
-                
+
                 Text(
                     text = value,
                     style = MaterialTheme.typography.headlineSmall,
                     color = Color.White,
-                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                    textAlign = TextAlign.Center
                 )
-                
+
                 Text(
                     text = label,
                     style = MaterialTheme.typography.bodySmall,
-                    color = Color.White.copy(alpha = 0.9f)
+                    color = Color.White.copy(alpha = 0.9f),
+                    textAlign = TextAlign.Center
                 )
             }
         }
