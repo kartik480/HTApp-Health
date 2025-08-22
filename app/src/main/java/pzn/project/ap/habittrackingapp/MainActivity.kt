@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -15,6 +16,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -35,6 +37,8 @@ import androidx.compose.ui.zIndex
 import androidx.compose.animation.*
 import androidx.compose.animation.core.*
 import pzn.project.ap.habittrackingapp.ui.theme.*
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -57,18 +61,200 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun HabitTrackingApp() {
     var currentScreen by remember { mutableStateOf<Screen>(Screen.Welcome) }
+    var isLogin by remember { mutableStateOf(false) }
     
+    // Initialize with sample data to showcase features
+    var userProfile by remember { 
+        mutableStateOf(
+            UserProfile(
+                username = "HabitHero",
+                currentStreak = 12,
+                longestStreak = 45,
+                totalHabits = 8,
+                completedHabits = 6
+            )
+        ) 
+    }
+    
+    var aiCoach by remember { 
+        mutableStateOf(
+            AIHabitCoach(
+                insights = listOf(
+                    AIInsight(
+                        id = "1",
+                        title = "Morning Exercise Success Pattern",
+                        description = "You're 85% more likely to complete your workout when done before 8 AM",
+                        type = InsightType.SUCCESS_PATTERN,
+                        confidence = 0.92f
+                    ),
+                    AIInsight(
+                        id = "2",
+                        title = "Weekend Reading Struggle",
+                        description = "Your reading habit has a 70% failure rate on weekends",
+                        type = InsightType.FAILURE_PATTERN,
+                        confidence = 0.78f
+                    ),
+                    AIInsight(
+                        id = "3",
+                        title = "Meditation Mood Boost",
+                        description = "Daily meditation improves your mood by 40% on average",
+                        type = InsightType.MOOD_CORRELATION,
+                        confidence = 0.85f
+                    )
+                ),
+                predictions = listOf(
+                    HabitPrediction(
+                        habitId = "reading",
+                        habitName = "Read 30 minutes",
+                        failureProbability = 0.7f,
+                        riskFactors = listOf("Weekend schedule", "Evening fatigue"),
+                        preventionStrategies = listOf("Set weekend reminders", "Read in the morning")
+                    ),
+                    HabitPrediction(
+                        habitId = "workout",
+                        habitName = "Morning workout",
+                        failureProbability = 0.3f,
+                        riskFactors = listOf("Late night sleep"),
+                        preventionStrategies = listOf("Early bedtime", "Prepare workout clothes")
+                    )
+                ),
+                recommendations = listOf(
+                    HabitRecommendation(
+                        habitName = "Hydration Tracking",
+                        description = "Track water intake to improve overall health",
+                        difficulty = Difficulty.EASY,
+                        expectedImpact = 0.8f,
+                        bestTime = "Throughout the day"
+                    )
+                )
+            )
+        ) 
+    }
+    
+    var gameProgress by remember { 
+        mutableStateOf(
+            GameProgress(
+                level = 7,
+                experience = 650,
+                experienceToNextLevel = 1000,
+                coins = 1250,
+                achievements = listOf(
+                    Achievement(
+                        id = "1",
+                        name = "First Steps",
+                        description = "Complete your first habit",
+                        icon = "🌟",
+                        isUnlocked = true,
+                        reward = Reward(RewardType.COINS, 100, "100 Coins")
+                    ),
+                    Achievement(
+                        id = "2",
+                        name = "Week Warrior",
+                        description = "Complete habits for 7 days straight",
+                        icon = "🔥",
+                        isUnlocked = true,
+                        reward = Reward(RewardType.XP, 200, "200 XP")
+                    ),
+                    Achievement(
+                        id = "3",
+                        name = "Habit Master",
+                        description = "Reach level 5",
+                        icon = "👑",
+                        isUnlocked = true,
+                        reward = Reward(RewardType.THEME, 1, "Premium Theme")
+                    )
+                ),
+                virtualCharacter = VirtualCharacter(
+                    name = "Habit Hero",
+                    pets = listOf(
+                        VirtualPet("Fluffy", PetType.DOG, 3, 0.9f, 2),
+                        VirtualPet("Sparkle", PetType.UNICORN, 5, 0.95f, 3)
+                    )
+                )
+            )
+        ) 
+    }
+    
+    var socialChallenges by remember { 
+        mutableStateOf(
+            SocialChallenges(
+                activeChallenges = listOf(
+                    Challenge(
+                        id = "1",
+                        name = "30-Day Fitness Challenge",
+                        description = "Complete daily workouts for 30 days",
+                        type = ChallengeType.MONTHLY_CHALLENGE,
+                        participants = listOf("user1", "user2", "user3", "user4"),
+                        startDate = System.currentTimeMillis() - 86400000 * 5, // 5 days ago
+                        endDate = System.currentTimeMillis() + 86400000 * 25, // 25 days left
+                        rewards = listOf(Reward(RewardType.COINS, 500, "500 Coins")),
+                        leaderboard = emptyList()
+                    ),
+                    Challenge(
+                        id = "2",
+                        name = "Reading Race",
+                        description = "Read the most pages this week",
+                        type = ChallengeType.WEEKLY_GOAL,
+                        participants = listOf("user1", "user2", "user5"),
+                        startDate = System.currentTimeMillis() - 86400000 * 2,
+                        endDate = System.currentTimeMillis() + 86400000 * 5,
+                        rewards = listOf(Reward(RewardType.XP, 300, "300 XP")),
+                        leaderboard = emptyList()
+                    )
+                ),
+                friends = listOf(
+                    Friend("1", "Sarah", "avatar1", 8, true, System.currentTimeMillis()),
+                    Friend("2", "Mike", "avatar2", 6, false, System.currentTimeMillis() - 3600000),
+                    Friend("3", "Emma", "avatar3", 9, true, System.currentTimeMillis()),
+                    Friend("4", "Alex", "avatar4", 5, false, System.currentTimeMillis() - 7200000),
+                    Friend("5", "Lisa", "avatar5", 7, true, System.currentTimeMillis())
+                ),
+                groupChallenges = listOf(
+                    GroupChallenge(
+                        id = "1",
+                        name = "Team Wellness",
+                        description = "Complete wellness habits as a team",
+                        members = listOf("user1", "user2", "user3"),
+                        goal = "Complete 90% of daily wellness habits",
+                        progress = 0.75f,
+                        deadline = System.currentTimeMillis() + 86400000 * 7,
+                        rewards = listOf(Reward(RewardType.THEME, 1, "Team Theme"))
+                    )
+                )
+            )
+        ) 
+    }
+
     when (currentScreen) {
-        Screen.Welcome -> WelcomeScreen(
-            onGetStarted = { currentScreen = Screen.Auth }
-        )
-        Screen.Auth -> AuthScreen(
-            onBackToWelcome = { currentScreen = Screen.Welcome },
-            onLoginSuccess = { currentScreen = Screen.Home }
-        )
-        Screen.Home -> HomeScreen(
-            onLogout = { currentScreen = Screen.Welcome }
-        )
+        Screen.Welcome -> {
+            WelcomeScreen(
+                onGetStarted = { currentScreen = Screen.Auth }
+            )
+        }
+        Screen.Auth -> {
+            AuthScreen(
+                onBackToWelcome = { currentScreen = Screen.Welcome },
+                onLoginSuccess = { 
+                    isLogin = true
+                    currentScreen = Screen.Home
+                }
+            )
+        }
+        Screen.Home -> {
+            HomeScreen(
+                onLogout = { 
+                    currentScreen = Screen.Welcome
+                    isLogin = false
+                },
+                userProfile = userProfile,
+                aiCoach = aiCoach,
+                gameProgress = gameProgress,
+                socialChallenges = socialChallenges,
+                onUpdateProfile = { userProfile = it },
+                onUpdateGameProgress = { gameProgress = it },
+                onUpdateSocialChallenges = { socialChallenges = it }
+            )
+        }
     }
 }
 
@@ -76,6 +262,215 @@ sealed class Screen {
     object Welcome : Screen()
     object Auth : Screen()
     object Home : Screen()
+}
+
+// AI Habit Coach Data Classes
+data class AIHabitCoach(
+    val insights: List<AIInsight> = emptyList(),
+    val predictions: List<HabitPrediction> = emptyList(),
+    val recommendations: List<HabitRecommendation> = emptyList(),
+    val moodCorrelations: List<MoodCorrelation> = emptyList()
+)
+
+data class AIInsight(
+    val id: String,
+    val title: String,
+    val description: String,
+    val type: InsightType,
+    val confidence: Float,
+    val timestamp: Long = System.currentTimeMillis()
+)
+
+enum class InsightType {
+    SUCCESS_PATTERN, FAILURE_PATTERN, MOOD_CORRELATION, OPTIMIZATION_TIP
+}
+
+data class HabitPrediction(
+    val habitId: String,
+    val habitName: String,
+    val failureProbability: Float,
+    val riskFactors: List<String>,
+    val preventionStrategies: List<String>
+)
+
+data class HabitRecommendation(
+    val habitName: String,
+    val description: String,
+    val difficulty: Difficulty,
+    val expectedImpact: Float,
+    val bestTime: String
+)
+
+enum class Difficulty {
+    EASY, MEDIUM, HARD, EXPERT
+}
+
+data class MoodCorrelation(
+    val habitName: String,
+    val moodImprovement: Float,
+    val correlationStrength: Float,
+    val dataPoints: Int
+)
+
+// Gamification Data Classes
+data class GameProgress(
+    val level: Int = 1,
+    val experience: Int = 0,
+    val experienceToNextLevel: Int = 100,
+    val achievements: List<Achievement> = emptyList(),
+    val virtualCharacter: VirtualCharacter = VirtualCharacter(),
+    val coins: Int = 0,
+    val streakMultiplier: Float = 1.0f
+)
+
+data class Achievement(
+    val id: String,
+    val name: String,
+    val description: String,
+    val icon: String,
+    val isUnlocked: Boolean = false,
+    val unlockedAt: Long? = null,
+    val reward: Reward
+)
+
+data class Reward(
+    val type: RewardType,
+    val value: Int,
+    val description: String
+)
+
+enum class RewardType {
+    COINS, XP, THEME, AVATAR, SOUND_EFFECT
+}
+
+data class VirtualCharacter(
+    val name: String = "Habit Hero",
+    val avatar: String = "default_avatar",
+    val accessories: List<String> = emptyList(),
+    val pets: List<VirtualPet> = emptyList(),
+    val currentAdventure: Adventure? = null
+)
+
+data class VirtualPet(
+    val name: String,
+    val type: PetType,
+    val level: Int,
+    val happiness: Float,
+    val evolutionStage: Int
+)
+
+enum class PetType {
+    DOG, CAT, BIRD, DRAGON, UNICORN
+}
+
+data class Adventure(
+    val id: String,
+    val name: String,
+    val description: String,
+    val requiredLevel: Int,
+    val rewards: List<Reward>,
+    val isCompleted: Boolean = false
+)
+
+// Social Challenges Data Classes
+data class SocialChallenges(
+    val activeChallenges: List<Challenge> = emptyList(),
+    val friends: List<Friend> = emptyList(),
+    val leaderboards: List<Leaderboard> = emptyList(),
+    val groupChallenges: List<GroupChallenge> = emptyList()
+)
+
+data class Challenge(
+    val id: String,
+    val name: String,
+    val description: String,
+    val type: ChallengeType,
+    val participants: List<String>,
+    val startDate: Long,
+    val endDate: Long,
+    val rewards: List<Reward>,
+    val leaderboard: List<ChallengeParticipant>
+)
+
+enum class ChallengeType {
+    DAILY_STREAK, WEEKLY_GOAL, MONTHLY_CHALLENGE, FRIEND_VS_FRIEND
+}
+
+data class ChallengeParticipant(
+    val userId: String,
+    val username: String,
+    val avatar: String,
+    val score: Int,
+    val rank: Int
+)
+
+data class Friend(
+    val id: String,
+    val username: String,
+    val avatar: String,
+    val level: Int,
+    val isOnline: Boolean,
+    val lastSeen: Long
+)
+
+data class Leaderboard(
+    val id: String,
+    val name: String,
+    val type: LeaderboardType,
+    val participants: List<LeaderboardEntry>,
+    val timeFrame: TimeFrame
+)
+
+enum class LeaderboardType {
+    GLOBAL, FRIENDS, CHALLENGE, CATEGORY
+}
+
+enum class TimeFrame {
+    DAILY, WEEKLY, MONTHLY, ALL_TIME
+}
+
+data class LeaderboardEntry(
+    val userId: String,
+    val username: String,
+    val avatar: String,
+    val score: Int,
+    val rank: Int,
+    val change: Int = 0
+)
+
+data class GroupChallenge(
+    val id: String,
+    val name: String,
+    val description: String,
+    val members: List<String>,
+    val goal: String,
+    val progress: Float,
+    val deadline: Long,
+    val rewards: List<Reward>
+)
+
+// User Profile Data Class
+data class UserProfile(
+    val id: String = "user_001",
+    val username: String = "HabitHero",
+    val email: String = "user@example.com",
+    val avatar: String = "default_avatar",
+    val joinDate: Long = System.currentTimeMillis(),
+    val totalHabits: Int = 0,
+    val completedHabits: Int = 0,
+    val currentStreak: Int = 0,
+    val longestStreak: Int = 0,
+    val moodHistory: List<MoodEntry> = emptyList()
+)
+
+data class MoodEntry(
+    val timestamp: Long,
+    val mood: Mood,
+    val note: String = ""
+)
+
+enum class Mood {
+    EXCELLENT, GREAT, GOOD, OKAY, POOR, TERRIBLE
 }
 
 @Composable
@@ -463,9 +858,20 @@ fun RegisterForm() {
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
-fun HomeScreen(onLogout: () -> Unit) {
+fun HomeScreen(
+    onLogout: () -> Unit,
+    userProfile: UserProfile,
+    aiCoach: AIHabitCoach,
+    gameProgress: GameProgress,
+    socialChallenges: SocialChallenges,
+    onUpdateProfile: (UserProfile) -> Unit,
+    onUpdateGameProgress: (GameProgress) -> Unit,
+    onUpdateSocialChallenges: (SocialChallenges) -> Unit
+) {
     var selectedTab by remember { mutableStateOf(0) }
     var showSideMenu by remember { mutableStateOf(false) }
+    var showCalendarPanel by remember { mutableStateOf(false) }
+    var selectedDate by remember { mutableStateOf(java.time.LocalDate.now()) }
 
     Box(modifier = Modifier.fillMaxSize()) {
         Scaffold(
@@ -522,28 +928,34 @@ fun HomeScreen(onLogout: () -> Unit) {
                     contentColor = MaterialTheme.colorScheme.primary
                 ) {
                     NavigationBarItem(
-                        icon = { Icon(Icons.Default.Home, contentDescription = null) },
+                        icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
                         label = { Text("Home") },
                         selected = selectedTab == 0,
                         onClick = { selectedTab = 0 }
                     )
                     NavigationBarItem(
-                        icon = { Icon(Icons.Default.List, contentDescription = null) },
+                        icon = { Icon(Icons.Default.List, contentDescription = "Habits") },
                         label = { Text("Habits") },
                         selected = selectedTab == 1,
                         onClick = { selectedTab = 1 }
                     )
                     NavigationBarItem(
-                        icon = { Icon(Icons.Default.Info, contentDescription = null) },
-                        label = { Text("Progress") },
+                        icon = { Icon(Icons.Default.Star, contentDescription = "AI Coach") },
+                        label = { Text("AI Coach") },
                         selected = selectedTab == 2,
                         onClick = { selectedTab = 2 }
                     )
                     NavigationBarItem(
-                        icon = { Icon(Icons.Default.Settings, contentDescription = null) },
-                        label = { Text("Settings") },
+                        icon = { Icon(Icons.Default.Person, contentDescription = "Social") },
+                        label = { Text("Social") },
                         selected = selectedTab == 3,
                         onClick = { selectedTab = 3 }
+                    )
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
+                        label = { Text("Settings") },
+                        selected = selectedTab == 4,
+                        onClick = { selectedTab = 4 }
                     )
                 }
             }
@@ -572,8 +984,9 @@ fun HomeScreen(onLogout: () -> Unit) {
                     when (targetTab) {
                         0 -> HomeTab()
                         1 -> HabitsTab()
-                        2 -> ProgressTab()
-                        3 -> SettingsTab(onLogout)
+                        2 -> AICoachTab(aiCoach = aiCoach, gameProgress = gameProgress)
+                        3 -> SocialTab(socialChallenges = socialChallenges, userProfile = userProfile)
+                        4 -> SettingsTab(onLogout)
                     }
                 }
             }
@@ -597,7 +1010,36 @@ fun HomeScreen(onLogout: () -> Unit) {
         ) {
             SideMenuPanel(
                 onDismiss = { showSideMenu = false },
-                onLogout = onLogout
+                onLogout = onLogout,
+                onCalendarClick = { 
+                    showCalendarPanel = true
+                    showSideMenu = false
+                }
+            )
+        }
+        
+        // Calendar Panel
+        AnimatedVisibility(
+            visible = showCalendarPanel,
+            enter = slideInVertically(
+                animationSpec = tween(400, easing = FastOutSlowInEasing),
+                initialOffsetY = { -it }
+            ) + fadeIn(
+                animationSpec = tween(400)
+            ),
+            exit = slideOutVertically(
+                animationSpec = tween(400, easing = FastOutSlowInEasing),
+                targetOffsetY = { -it }
+            ) + fadeOut(
+                animationSpec = tween(400)
+            )
+        ) {
+            CalendarPanel(
+                selectedDate = selectedDate,
+                onDateSelected = { selectedDate = it },
+                onDismiss = { showCalendarPanel = false },
+                userProfile = userProfile,
+                gameProgress = gameProgress
             )
         }
     }
@@ -1612,7 +2054,11 @@ fun EnhancedAddHabitDialog(onDismiss: () -> Unit, onHabitAdded: () -> Unit) {
 }
 
 @Composable
-fun SideMenuPanel(onDismiss: () -> Unit, onLogout: () -> Unit) {
+fun SideMenuPanel(
+    onDismiss: () -> Unit,
+    onLogout: () -> Unit,
+    onCalendarClick: () -> Unit
+) {
     Box(modifier = Modifier.fillMaxSize()) {
         // Animated Backdrop
         AnimatedVisibility(
@@ -1709,7 +2155,7 @@ fun SideMenuPanel(onDismiss: () -> Unit, onLogout: () -> Unit) {
                             icon = Icons.Default.DateRange,
                             title = "Calendar",
                             subtitle = "Track your schedule",
-                            onClick = { /* TODO: Navigate to calendar */ }
+                            onClick = onCalendarClick
                         )
                         
                         SideMenuItem(
@@ -1956,5 +2402,998 @@ fun WelcomeScreenPreview() {
 fun AuthScreenPreview() {
     HabitTrackingAppTheme {
         AuthScreen(onBackToWelcome = {}, onLoginSuccess = {})
+    }
+}
+
+@Composable
+fun AICoachTab(aiCoach: AIHabitCoach, gameProgress: GameProgress) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0xFF667EEA),
+                        Color(0xFF764BA2)
+                    )
+                )
+            )
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp)
+    ) {
+        // AI Coach Header with Level Display
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                // Level and XP Display
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Column {
+                        Text(
+                            text = "Level ${gameProgress.level}",
+                            style = MaterialTheme.typography.headlineMedium,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                        )
+                        Text(
+                            text = "AI Habit Coach",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                        )
+                    }
+                    
+                    // XP Progress
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = "${gameProgress.experience}/${gameProgress.experienceToNextLevel} XP",
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        LinearProgressIndicator(
+                            progress = gameProgress.experience.toFloat() / gameProgress.experienceToNextLevel,
+                            modifier = Modifier.width(80.dp),
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                    }
+                }
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                // Virtual Character Display
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(
+                        containerColor = Color(0xFFF0F8FF)
+                    )
+                ) {
+                    Row(
+                        modifier = Modifier.padding(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .size(60.dp)
+                                .background(
+                                    color = MaterialTheme.colorScheme.primary,
+                                    shape = CircleShape
+                                ),
+                            contentAlignment = Alignment.Center
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Person,
+                                contentDescription = null,
+                                tint = Color.White,
+                                modifier = Modifier.size(32.dp)
+                            )
+                        }
+                        
+                        Spacer(modifier = Modifier.width(16.dp))
+                        
+                        Column {
+                            Text(
+                                text = gameProgress.virtualCharacter.name,
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                            )
+                            Text(
+                                text = "Coins: ${gameProgress.coins}",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = Color(0xFFFFD700)
+                            )
+                        }
+                    }
+                }
+            }
+        }
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        // AI Insights Section
+        if (aiCoach.insights.isNotEmpty()) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(20.dp)
+                ) {
+                    Text(
+                        text = "🤖 AI Insights",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                    )
+                    
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    aiCoach.insights.take(3).forEach { insight ->
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = when (insight.type) {
+                                    InsightType.SUCCESS_PATTERN -> Color(0xFFE8F5E8)
+                                    InsightType.FAILURE_PATTERN -> Color(0xFFFFF3E0)
+                                    InsightType.MOOD_CORRELATION -> Color(0xFFE3F2FD)
+                                    InsightType.OPTIMIZATION_TIP -> Color(0xFFF3E5F5)
+                                }
+                            )
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(16.dp)
+                            ) {
+                                Text(
+                                    text = insight.title,
+                                    style = MaterialTheme.typography.titleSmall,
+                                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                                )
+                                Text(
+                                    text = insight.description,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    modifier = Modifier.padding(top = 4.dp)
+                                )
+                                Text(
+                                    text = "Confidence: ${(insight.confidence * 100).toInt()}%",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f),
+                                    modifier = Modifier.padding(top = 4.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        // Habit Predictions
+        if (aiCoach.predictions.isNotEmpty()) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(20.dp)
+                ) {
+                    Text(
+                        text = "🔮 Failure Predictions",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                    )
+                    
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    aiCoach.predictions.take(2).forEach { prediction ->
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color(0xFFFFF3E0)
+                            )
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(16.dp)
+                            ) {
+                                Text(
+                                    text = prediction.habitName,
+                                    style = MaterialTheme.typography.titleSmall,
+                                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                                )
+                                Text(
+                                    text = "Risk: ${(prediction.failureProbability * 100).toInt()}%",
+                                    style = MaterialTheme.typography.bodyMedium,
+                                    color = Color(0xFFE65100)
+                                )
+                                Text(
+                                    text = "Prevention: ${prediction.preventionStrategies.firstOrNull() ?: "Stay consistent!"}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    modifier = Modifier.padding(top = 4.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        // Achievements Section
+        if (gameProgress.achievements.isNotEmpty()) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(20.dp)
+                ) {
+                    Text(
+                        text = "🏆 Recent Achievements",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                    )
+                    
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    LazyRow(
+                        horizontalArrangement = Arrangement.spacedBy(12.dp)
+                    ) {
+                        items(gameProgress.achievements.filter { it.isUnlocked }.take(5)) { achievement ->
+                            Card(
+                                modifier = Modifier.width(120.dp),
+                                colors = CardDefaults.cardColors(
+                                    containerColor = Color(0xFFE8F5E8)
+                                )
+                            ) {
+                                Column(
+                                    modifier = Modifier.padding(12.dp),
+                                    horizontalAlignment = Alignment.CenterHorizontally
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Star,
+                                        contentDescription = null,
+                                        tint = Color(0xFFFFD700),
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                    Text(
+                                        text = achievement.name,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        textAlign = TextAlign.Center,
+                                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                                    )
+                                    Text(
+                                        text = achievement.reward.description,
+                                        style = MaterialTheme.typography.bodySmall,
+                                        textAlign = TextAlign.Center,
+                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun SocialTab(socialChallenges: SocialChallenges, userProfile: UserProfile) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .background(
+                brush = Brush.verticalGradient(
+                    colors = listOf(
+                        Color(0xFF4CAF50),
+                        Color(0xFF2E7D32)
+                    )
+                )
+            )
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp)
+    ) {
+        // Social Header
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            colors = CardDefaults.cardColors(containerColor = Color.White),
+            elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+        ) {
+            Column(
+                modifier = Modifier.padding(20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "🌟 Social Hub",
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                )
+                Text(
+                    text = "Connect, Compete, Conquer!",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                )
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                // Quick Stats
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceEvenly
+                ) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = "${socialChallenges.friends.size}",
+                            style = MaterialTheme.typography.headlineSmall,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                        )
+                        Text(
+                            text = "Friends",
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = "${socialChallenges.activeChallenges.size}",
+                            style = MaterialTheme.typography.headlineSmall,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                        )
+                        Text(
+                            text = "Challenges",
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                        Text(
+                            text = "${userProfile.currentStreak}",
+                            style = MaterialTheme.typography.headlineSmall,
+                            color = MaterialTheme.colorScheme.primary,
+                            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                        )
+                        Text(
+                            text = "Day Streak",
+                            style = MaterialTheme.typography.bodySmall
+                        )
+                    }
+                }
+            }
+        }
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        // Active Challenges
+        if (socialChallenges.activeChallenges.isNotEmpty()) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(20.dp)
+                ) {
+                    Text(
+                        text = "🔥 Active Challenges",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                    )
+                    
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    socialChallenges.activeChallenges.take(3).forEach { challenge ->
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color(0xFFFFF3E0)
+                            )
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(16.dp)
+                            ) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = challenge.name,
+                                        style = MaterialTheme.typography.titleSmall,
+                                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                                    )
+                                    Text(
+                                        text = "${challenge.participants.size} participants",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6f)
+                                    )
+                                }
+                                Text(
+                                    text = challenge.description,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    modifier = Modifier.padding(top = 4.dp)
+                                )
+                                Text(
+                                    text = "Rewards: ${challenge.rewards.firstOrNull()?.description ?: "XP & Coins"}",
+                                    style = MaterialTheme.typography.bodySmall,
+                                    color = Color(0xFFFFD700),
+                                    modifier = Modifier.padding(top = 4.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        // Friends Leaderboard
+        if (socialChallenges.friends.isNotEmpty()) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(20.dp)
+                ) {
+                    Text(
+                        text = "👥 Friends Leaderboard",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                    )
+                    
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    socialChallenges.friends.sortedByDescending { it.level }.take(5).forEachIndexed { index, friend ->
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 2.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = when (index) {
+                                    0 -> Color(0xFFFFD700) // Gold
+                                    1 -> Color(0xFFC0C0C0) // Silver
+                                    2 -> Color(0xFFCD7F32) // Bronze
+                                    else -> Color.White
+                                }
+                            )
+                        ) {
+                            Row(
+                                modifier = Modifier.padding(16.dp),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "#${index + 1}",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                                    modifier = Modifier.width(40.dp)
+                                )
+                                
+                                Box(
+                                    modifier = Modifier
+                                        .size(40.dp)
+                                        .background(
+                                            color = MaterialTheme.colorScheme.primary,
+                                            shape = CircleShape
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    Icon(
+                                        imageVector = Icons.Default.Person,
+                                        contentDescription = null,
+                                        tint = Color.White,
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                }
+                                
+                                Spacer(modifier = Modifier.width(12.dp))
+                                
+                                Column(modifier = Modifier.weight(1f)) {
+                                    Text(
+                                        text = friend.username,
+                                        style = MaterialTheme.typography.titleSmall,
+                                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                                    )
+                                    Text(
+                                        text = "Level ${friend.level}",
+                                        style = MaterialTheme.typography.bodySmall,
+                                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+                                    )
+                                }
+                                
+                                if (friend.isOnline) {
+                                    Box(
+                                        modifier = Modifier
+                                            .size(12.dp)
+                                            .background(
+                                                color = Color.Green,
+                                                shape = CircleShape
+                                            )
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        // Group Challenges
+        if (socialChallenges.groupChallenges.isNotEmpty()) {
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(20.dp)
+                ) {
+                    Text(
+                        text = "🚀 Group Challenges",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                    )
+                    
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    socialChallenges.groupChallenges.take(2).forEach { groupChallenge ->
+                        Card(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 4.dp),
+                            colors = CardDefaults.cardColors(
+                                containerColor = Color(0xFFE3F2FD)
+                            )
+                        ) {
+                            Column(
+                                modifier = Modifier.padding(16.dp)
+                            ) {
+                                Text(
+                                    text = groupChallenge.name,
+                                    style = MaterialTheme.typography.titleSmall,
+                                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                                )
+                                Text(
+                                    text = groupChallenge.description,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    modifier = Modifier.padding(top = 4.dp)
+                                )
+                                
+                                Spacer(modifier = Modifier.height(8.dp))
+                                
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    horizontalArrangement = Arrangement.SpaceBetween,
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Text(
+                                        text = "Progress: ${(groupChallenge.progress * 100).toInt()}%",
+                                        style = MaterialTheme.typography.bodyMedium,
+                                        color = MaterialTheme.colorScheme.primary
+                                    )
+                                    Text(
+                                        text = "${groupChallenge.members.size} members",
+                                        style = MaterialTheme.typography.bodySmall
+                                    )
+                                }
+                                
+                                LinearProgressIndicator(
+                                    progress = groupChallenge.progress,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(top = 8.dp),
+                                    color = MaterialTheme.colorScheme.primary
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun CalendarPanel(
+    selectedDate: java.time.LocalDate,
+    onDateSelected: (java.time.LocalDate) -> Unit,
+    onDismiss: () -> Unit,
+    userProfile: UserProfile,
+    gameProgress: GameProgress
+) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        // Backdrop
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.5f))
+                .clickable { onDismiss() }
+        )
+        
+        // Calendar Content
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            Color(0xFF667EEA),
+                            Color(0xFF764BA2),
+                            Color(0xFFF093FB)
+                        )
+                    )
+                )
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp)
+        ) {
+            // Header
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                IconButton(onClick = onDismiss) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Close",
+                        tint = Color.White,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+                
+                Text(
+                    text = "📅 Habit Calendar",
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = Color.White,
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                )
+                
+                IconButton(onClick = { /* TODO: Add new habit */ }) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Add Habit",
+                        tint = Color.White,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+            }
+            
+            Spacer(modifier = Modifier.height(16.dp))
+            
+            // Calendar Grid
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(defaultElevation = 8.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(20.dp)
+                ) {
+                    // Month Navigation
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(
+                            onClick = {
+                                onDateSelected(selectedDate.minusMonths(1))
+                            }
+                        ) {
+                            Icon(Icons.Default.ArrowBack, contentDescription = "Previous Month")
+                        }
+                        
+                        Text(
+                            text = selectedDate.format(java.time.format.DateTimeFormatter.ofPattern("MMMM yyyy")),
+                            style = MaterialTheme.typography.titleLarge,
+                            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                        )
+                        
+                        IconButton(
+                            onClick = {
+                                onDateSelected(selectedDate.plusMonths(1))
+                            }
+                        ) {
+                            Icon(Icons.Default.ArrowForward, contentDescription = "Next Month")
+                        }
+                    }
+                    
+                    Spacer(modifier = Modifier.height(12.dp))
+                    
+                    // Day Headers
+                    Row(
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        listOf("Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat").forEach { day ->
+                            Text(
+                                text = day,
+                                modifier = Modifier.weight(1f),
+                                textAlign = TextAlign.Center,
+                                style = MaterialTheme.typography.bodyMedium,
+                                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.primary
+                            )
+                        }
+                    }
+                    
+                    Spacer(modifier = Modifier.height(6.dp))
+                    
+                    // Calendar Days
+                    val firstDayOfMonth = selectedDate.withDayOfMonth(1)
+                    val lastDayOfMonth = selectedDate.withDayOfMonth(selectedDate.lengthOfMonth())
+                    val firstDayOfWeek = firstDayOfMonth.dayOfWeek.value % 7
+                    
+                    var currentWeek by remember { mutableStateOf(0) }
+                    
+                    repeat(6) { week ->
+                        Row(
+                            modifier = Modifier.fillMaxWidth()
+                        ) {
+                            repeat(7) { dayOfWeek ->
+                                val dayOffset = week * 7 + dayOfWeek - firstDayOfWeek
+                                val currentDate = if (dayOffset >= 0 && dayOffset < selectedDate.lengthOfMonth()) {
+                                    firstDayOfMonth.plusDays(dayOffset.toLong())
+                                } else null
+                                
+                                Box(
+                                    modifier = Modifier
+                                        .weight(1f)
+                                        .aspectRatio(1f)
+                                        .padding(1.dp)
+                                        .background(
+                                            color = when {
+                                                currentDate == null -> Color.Transparent
+                                                currentDate == java.time.LocalDate.now() -> Color(0xFFE3F2FD)
+                                                currentDate == selectedDate -> Color(0xFFFFD700)
+                                                else -> Color.Transparent
+                                            },
+                                            shape = RoundedCornerShape(6.dp)
+                                        )
+                                        .clickable(
+                                            enabled = currentDate != null
+                                        ) {
+                                            currentDate?.let { onDateSelected(it) }
+                                        }
+                                        .border(
+                                            width = if (currentDate == selectedDate) 2.dp else 0.dp,
+                                            color = if (currentDate == selectedDate) Color(0xFFFF6B35) else Color.Transparent,
+                                            shape = RoundedCornerShape(6.dp)
+                                        ),
+                                    contentAlignment = Alignment.Center
+                                ) {
+                                    if (currentDate != null) {
+                                        Column(
+                                            horizontalAlignment = Alignment.CenterHorizontally
+                                        ) {
+                                            Text(
+                                                text = currentDate.dayOfMonth.toString(),
+                                                style = MaterialTheme.typography.bodyMedium,
+                                                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                                                color = when {
+                                                    currentDate == java.time.LocalDate.now() -> MaterialTheme.colorScheme.primary
+                                                    currentDate == selectedDate -> Color(0xFFFF6B35)
+                                                    else -> MaterialTheme.colorScheme.onSurface
+                                                }
+                                            )
+                                            
+                                            // Habit completion indicator
+                                            if (currentDate == java.time.LocalDate.now()) {
+                                                Box(
+                                                    modifier = Modifier
+                                                        .size(4.dp)
+                                                        .background(
+                                                            color = Color.Green,
+                                                            shape = CircleShape
+                                                        )
+                                                )
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            
+            Spacer(modifier = Modifier.height(12.dp))
+            
+            // Selected Date Details
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(20.dp)
+                ) {
+                    Text(
+                        text = "📋 ${selectedDate.format(java.time.format.DateTimeFormatter.ofPattern("EEEE, MMMM d"))}",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                    )
+                    
+                    Spacer(modifier = Modifier.height(16.dp))
+                    
+                    // Daily Stats
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(
+                                text = "5",
+                                style = MaterialTheme.typography.headlineSmall,
+                                color = MaterialTheme.colorScheme.primary,
+                                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                            )
+                            Text(
+                                text = "Habits",
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(
+                                text = "3",
+                                style = MaterialTheme.typography.headlineSmall,
+                                color = Color.Green,
+                                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                            )
+                            Text(
+                                text = "Completed",
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                            Text(
+                                text = "60%",
+                                style = MaterialTheme.typography.headlineSmall,
+                                color = Color(0xFFFF9800),
+                                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                            )
+                            Text(
+                                text = "Success",
+                                style = MaterialTheme.typography.bodySmall
+                            )
+                        }
+                    }
+                    
+                    Spacer(modifier = Modifier.height(12.dp))
+                    
+                    // Mood Tracker
+                    Text(
+                        text = "😊 How are you feeling today?",
+                        style = MaterialTheme.typography.titleMedium,
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                    )
+                    
+                    Spacer(modifier = Modifier.height(6.dp))
+                    
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        listOf("😢", "😐", "🙂", "😊", "🤩").forEach { emoji ->
+                            Box(
+                                modifier = Modifier
+                                    .size(36.dp)
+                                    .background(
+                                        color = Color(0xFFF0F0F0),
+                                        shape = CircleShape
+                                    )
+                                    .clickable { /* TODO: Set mood */ },
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = emoji,
+                                    style = MaterialTheme.typography.titleLarge
+                                )
+                            }
+                        }
+                    }
+                    
+                    Spacer(modifier = Modifier.height(12.dp))
+                    
+                    // Quick Actions
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly
+                    ) {
+                        Button(
+                            onClick = { /* TODO: Add quick habit */ },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.primary
+                            )
+                        ) {
+                            Icon(Icons.Default.Add, contentDescription = null)
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text("Quick Habit")
+                        }
+                        
+                        Button(
+                            onClick = { /* TODO: View analytics */ },
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = Color(0xFF4CAF50)
+                            )
+                        ) {
+                            Icon(Icons.Default.Info, contentDescription = null)
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text("Analytics")
+                        }
+                    }
+                }
+            }
+            
+            Spacer(modifier = Modifier.height(12.dp))
+            
+            // Weekly Progress
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                colors = CardDefaults.cardColors(containerColor = Color.White),
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            ) {
+                Column(
+                    modifier = Modifier.padding(16.dp)
+                ) {
+                    Text(
+                        text = "📊 This Week's Progress",
+                        style = MaterialTheme.typography.titleLarge,
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                    )
+                    
+                    Spacer(modifier = Modifier.height(12.dp))
+                    
+                    // Weekly chart
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceEvenly,
+                        verticalAlignment = Alignment.Bottom
+                    ) {
+                        listOf(65, 80, 45, 90, 75, 85, 70).forEachIndexed { index, percentage ->
+                            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                                Box(
+                                    modifier = Modifier
+                                        .width(28.dp)
+                                        .height((percentage * 1.8).dp)
+                                        .background(
+                                            color = when {
+                                                percentage >= 80 -> Color.Green
+                                                percentage >= 60 -> Color(0xFFFF9800)
+                                                else -> Color.Red
+                                            },
+                                            shape = RoundedCornerShape(topStart = 4.dp, topEnd = 4.dp)
+                                        )
+                                )
+                                Text(
+                                    text = listOf("M", "T", "W", "T", "F", "S", "S")[index],
+                                    style = MaterialTheme.typography.bodySmall,
+                                    modifier = Modifier.padding(top = 4.dp)
+                                )
+                            }
+                        }
+                    }
+                }
+            }
+        }
     }
 }
