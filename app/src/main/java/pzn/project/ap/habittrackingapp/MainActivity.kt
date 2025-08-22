@@ -31,6 +31,9 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
+import androidx.compose.animation.*
+import androidx.compose.animation.core.*
 import pzn.project.ap.habittrackingapp.ui.theme.*
 
 class MainActivity : ComponentActivity() {
@@ -50,6 +53,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun HabitTrackingApp() {
     var currentScreen by remember { mutableStateOf<Screen>(Screen.Welcome) }
@@ -457,7 +461,7 @@ fun RegisterForm() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalAnimationApi::class)
 @Composable
 fun HomeScreen(onLogout: () -> Unit) {
     var selectedTab by remember { mutableStateOf(0) }
@@ -549,17 +553,48 @@ fun HomeScreen(onLogout: () -> Unit) {
                     .fillMaxSize()
                     .padding(paddingValues)
             ) {
-                when (selectedTab) {
-                    0 -> HomeTab()
-                    1 -> HabitsTab()
-                    2 -> ProgressTab()
-                    3 -> SettingsTab(onLogout)
+                AnimatedContent(
+                    targetState = selectedTab,
+                    transitionSpec = {
+                        slideInHorizontally(
+                            animationSpec = tween(300, easing = FastOutSlowInEasing),
+                            initialOffsetX = { fullWidth -> fullWidth }
+                        ) + fadeIn(
+                            animationSpec = tween(300)
+                        ) with slideOutHorizontally(
+                            animationSpec = tween(300, easing = FastOutSlowInEasing),
+                            targetOffsetX = { fullWidth -> -fullWidth }
+                        ) + fadeOut(
+                            animationSpec = tween(300)
+                        )
+                    }
+                ) { targetTab ->
+                    when (targetTab) {
+                        0 -> HomeTab()
+                        1 -> HabitsTab()
+                        2 -> ProgressTab()
+                        3 -> SettingsTab(onLogout)
+                    }
                 }
             }
         }
 
         // Side Menu Panel
-        if (showSideMenu) {
+        AnimatedVisibility(
+            visible = showSideMenu,
+            enter = slideInHorizontally(
+                animationSpec = tween(400, easing = FastOutSlowInEasing),
+                initialOffsetX = { -it }
+            ) + fadeIn(
+                animationSpec = tween(400)
+            ),
+            exit = slideOutHorizontally(
+                animationSpec = tween(400, easing = FastOutSlowInEasing),
+                targetOffsetX = { -it }
+            ) + fadeOut(
+                animationSpec = tween(400)
+            )
+        ) {
             SideMenuPanel(
                 onDismiss = { showSideMenu = false },
                 onLogout = onLogout
@@ -828,35 +863,65 @@ fun QuickStatsRow() {
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        QuickStatCard(
-            value = "5",
-            label = "Habits",
-            icon = Icons.Default.List,
-            gradient = Brush.linearGradient(
-                colors = listOf(Color(0xFF4F46E5), Color(0xFF7C3AED))
+        AnimatedVisibility(
+            visible = true,
+            enter = fadeIn(
+                animationSpec = tween(800, delayMillis = 100)
+            ) + slideInVertically(
+                animationSpec = tween(800, delayMillis = 100),
+                initialOffsetY = { it }
             ),
             modifier = Modifier.weight(1f)
-        )
+        ) {
+            QuickStatCard(
+                value = "5",
+                label = "Habits",
+                icon = Icons.Default.List,
+                gradient = Brush.linearGradient(
+                    colors = listOf(Color(0xFF87CEEB), Color(0xFF4682B4))
+                )
+            )
+        }
         
-        QuickStatCard(
-            value = "3",
-            label = "Completed",
-            icon = Icons.Default.CheckCircle,
-            gradient = Brush.linearGradient(
-                colors = listOf(Color(0xFF059669), Color(0xFF10B981))
+        AnimatedVisibility(
+            visible = true,
+            enter = fadeIn(
+                animationSpec = tween(800, delayMillis = 200)
+            ) + slideInVertically(
+                animationSpec = tween(800, delayMillis = 200),
+                initialOffsetY = { it }
             ),
             modifier = Modifier.weight(1f)
-        )
+        ) {
+            QuickStatCard(
+                value = "3",
+                label = "Completed",
+                icon = Icons.Default.CheckCircle,
+                gradient = Brush.linearGradient(
+                    colors = listOf(Color(0xFF87CEEB), Color(0xFF4682B4))
+                )
+            )
+        }
         
-        QuickStatCard(
-            value = "12",
-            label = "Streak",
-            icon = Icons.Default.Star,
-            gradient = Brush.linearGradient(
-                colors = listOf(Color(0xFFDC2626), Color(0xFFEF4444))
+        AnimatedVisibility(
+            visible = true,
+            enter = fadeIn(
+                animationSpec = tween(800, delayMillis = 300)
+            ) + slideInVertically(
+                animationSpec = tween(800, delayMillis = 300),
+                initialOffsetY = { it }
             ),
             modifier = Modifier.weight(1f)
-        )
+        ) {
+            QuickStatCard(
+                value = "12",
+                label = "Streak",
+                icon = Icons.Default.Star,
+                gradient = Brush.linearGradient(
+                    colors = listOf(Color(0xFF87CEEB), Color(0xFF4682B4))
+                )
+            )
+        }
     }
 }
 
@@ -1545,15 +1610,25 @@ fun EnhancedAddHabitDialog(onDismiss: () -> Unit, onHabitAdded: () -> Unit) {
 @Composable
 fun SideMenuPanel(onDismiss: () -> Unit, onLogout: () -> Unit) {
     Box(modifier = Modifier.fillMaxSize()) {
-        // Backdrop
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black.copy(alpha = 0.5f))
-                .clickable { onDismiss() }
-        )
+        // Animated Backdrop
+        AnimatedVisibility(
+            visible = true,
+            enter = fadeIn(
+                animationSpec = tween(300)
+            ),
+            exit = fadeOut(
+                animationSpec = tween(300)
+            )
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Color.Black.copy(alpha = 0.5f))
+                    .clickable { onDismiss() }
+            )
+        }
         
-        // Side Menu Content
+        // Side Menu Content with staggered animations
         Box(
             modifier = Modifier
                 .fillMaxHeight()
@@ -1572,58 +1647,90 @@ fun SideMenuPanel(onDismiss: () -> Unit, onLogout: () -> Unit) {
             Column(
                 modifier = Modifier.fillMaxSize()
             ) {
-                // Header Section
-                SideMenuHeader()
+                // Header Section with fade-in animation
+                AnimatedVisibility(
+                    visible = true,
+                    enter = fadeIn(
+                        animationSpec = tween(600, delayMillis = 100)
+                    ) + slideInVertically(
+                        animationSpec = tween(600, delayMillis = 100),
+                        initialOffsetY = { -it / 2 }
+                    )
+                ) {
+                    SideMenuHeader()
+                }
                 
                 Spacer(modifier = Modifier.height(32.dp))
                 
-                // Menu Items
-                SideMenuItem(
-                    icon = Icons.Default.Home,
-                    title = "Dashboard",
-                    subtitle = "View your progress",
-                    onClick = { /* TODO: Navigate to dashboard */ }
-                )
-                
-                SideMenuItem(
-                    icon = Icons.Default.List,
-                    title = "My Habits",
-                    subtitle = "Manage your habits",
-                    onClick = { /* TODO: Navigate to habits */ }
-                )
-                
-                SideMenuItem(
-                    icon = Icons.Default.Star,
-                    title = "Achievements",
-                    subtitle = "View your badges",
-                    onClick = { /* TODO: Navigate to achievements */ }
-                )
-                
-                SideMenuItem(
-                    icon = Icons.Default.Info,
-                    title = "Analytics",
-                    subtitle = "Detailed insights",
-                    onClick = { /* TODO: Navigate to analytics */ }
-                )
-                
-                SideMenuItem(
-                    icon = Icons.Default.DateRange,
-                    title = "Calendar",
-                    subtitle = "Track your schedule",
-                    onClick = { /* TODO: Navigate to calendar */ }
-                )
-                
-                SideMenuItem(
-                    icon = Icons.Default.Notifications,
-                    title = "Reminders",
-                    subtitle = "Manage notifications",
-                    onClick = { /* TODO: Navigate to reminders */ }
-                )
+                // Menu Items with staggered animations
+                AnimatedVisibility(
+                    visible = true,
+                    enter = fadeIn(
+                        animationSpec = tween(600, delayMillis = 200)
+                    ) + slideInVertically(
+                        animationSpec = tween(600, delayMillis = 200),
+                        initialOffsetY = { -it / 2 }
+                    )
+                ) {
+                    Column {
+                        SideMenuItem(
+                            icon = Icons.Default.Home,
+                            title = "Dashboard",
+                            subtitle = "View your progress",
+                            onClick = { /* TODO: Navigate to dashboard */ }
+                        )
+                        
+                        SideMenuItem(
+                            icon = Icons.Default.List,
+                            title = "My Habits",
+                            subtitle = "Manage your habits",
+                            onClick = { /* TODO: Navigate to habits */ }
+                        )
+                        
+                        SideMenuItem(
+                            icon = Icons.Default.Star,
+                            title = "Achievements",
+                            subtitle = "View your badges",
+                            onClick = { /* TODO: Navigate to achievements */ }
+                        )
+                        
+                        SideMenuItem(
+                            icon = Icons.Default.Info,
+                            title = "Analytics",
+                            subtitle = "Detailed insights",
+                            onClick = { /* TODO: Navigate to analytics */ }
+                        )
+                        
+                        SideMenuItem(
+                            icon = Icons.Default.DateRange,
+                            title = "Calendar",
+                            subtitle = "Track your schedule",
+                            onClick = { /* TODO: Navigate to calendar */ }
+                        )
+                        
+                        SideMenuItem(
+                            icon = Icons.Default.Notifications,
+                            title = "Reminders",
+                            subtitle = "Manage notifications",
+                            onClick = { /* TODO: Navigate to reminders */ }
+                        )
+                    }
+                }
                 
                 Spacer(modifier = Modifier.weight(1f))
                 
-                // Bottom Section
-                SideMenuBottomSection(onLogout)
+                // Bottom Section with fade-in animation
+                AnimatedVisibility(
+                    visible = true,
+                    enter = fadeIn(
+                        animationSpec = tween(600, delayMillis = 400)
+                    ) + slideInVertically(
+                        animationSpec = tween(600, delayMillis = 400),
+                        initialOffsetY = { it / 2 }
+                    )
+                ) {
+                    SideMenuBottomSection(onLogout)
+                }
             }
         }
     }
