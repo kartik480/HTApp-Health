@@ -463,37 +463,51 @@ fun HomeScreen(onLogout: () -> Unit) {
     
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { }, // Empty title to maintain structure
-                navigationIcon = {
-                    IconButton(onClick = { /* TODO: Open menu */ }) {
-                        Icon(
-                            imageVector = Icons.Default.Menu,
-                            contentDescription = "Menu",
-                            tint = MaterialTheme.colorScheme.onPrimary
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        brush = Brush.linearGradient(
+                            colors = listOf(
+                                Color(0xFFFF8A65), // Light orange
+                                Color(0xFFFF7043), // Medium orange
+                                Color(0xFFFF5722)  // Deep orange
+                            )
                         )
-                    }
-                },
-                actions = {
-                    IconButton(onClick = { /* TODO: Show notifications */ }) {
-                        Icon(
-                            imageVector = Icons.Default.Notifications,
-                            contentDescription = "Notifications",
-                            tint = MaterialTheme.colorScheme.onPrimary
-                        )
-                    }
-                    IconButton(onClick = { /* TODO: Show account options */ }) {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = "Account",
-                            tint = MaterialTheme.colorScheme.onPrimary
-                        )
-                    }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary
+                    )
+            ) {
+                TopAppBar(
+                    title = { }, // Empty title to maintain structure
+                    navigationIcon = {
+                        IconButton(onClick = { /* TODO: Open menu */ }) {
+                            Icon(
+                                imageVector = Icons.Default.Menu,
+                                contentDescription = "Menu",
+                                tint = Color.White
+                            )
+                        }
+                    },
+                    actions = {
+                        IconButton(onClick = { /* TODO: Show notifications */ }) {
+                            Icon(
+                                imageVector = Icons.Default.Notifications,
+                                contentDescription = "Notifications",
+                                tint = Color.White
+                            )
+                        }
+                        IconButton(onClick = { /* TODO: Show account options */ }) {
+                            Icon(
+                                imageVector = Icons.Default.Person,
+                                contentDescription = "Account",
+                                tint = Color.White
+                            )
+                        }
+                    },
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = Color.Transparent
+                    )
                 )
-            )
+            }
         },
         bottomBar = {
             NavigationBar {
@@ -548,54 +562,94 @@ fun HomeTab() {
     Box(
         modifier = Modifier.fillMaxSize()
     ) {
+        // Background gradient
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            Color(0xFFF8FAFC),
+                            Color(0xFFE2E8F0),
+                            Color(0xFFCBD5E1)
+                        )
+                    )
+                )
+        )
+        
         Column(
             modifier = Modifier
                 .fillMaxSize()
                 .verticalScroll(rememberScrollState())
-                .padding(24.dp),
-            verticalArrangement = Arrangement.spacedBy(20.dp)
+                .padding(20.dp),
+            verticalArrangement = Arrangement.spacedBy(24.dp)
         ) {
-            // Header Section
-            HeaderSection()
+            // Enhanced Header Section
+            EnhancedHeaderSection()
             
-            // Motivational Quote Card
-            MotivationalQuoteCard()
+            // Quick Stats Row
+            QuickStatsRow()
             
-            // Today's Progress Overview
-            TodayProgressCard()
+            // Motivational Quote Card with gradient
+            GradientMotivationalCard()
             
-            // Daily Habits List
-            DailyHabitsList()
+            // Today's Habits with modern design
+            ModernHabitsSection()
             
-            // Weekly Progress Calendar
-            WeeklyProgressCalendar()
+            // Progress Overview with charts
+            EnhancedProgressSection()
             
-            // Streaks Section
-            StreaksSection()
+            // Weekly Calendar with modern design
+            ModernWeeklyCalendar()
             
-            // Leaderboard Section
-            LeaderboardSection()
+            // Streaks with achievement badges
+            AchievementStreaksSection()
+            
+            // Personal Records with gradient cards
+            GradientRecordsSection()
         }
         
-        // Floating Action Button
-        FloatingActionButton(
-            onClick = { showAddHabitDialog = true },
+        // Enhanced Floating Action Button
+        Box(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
-                .padding(24.dp),
-            containerColor = MaterialTheme.colorScheme.primary,
-            contentColor = MaterialTheme.colorScheme.onPrimary
+                .padding(24.dp)
         ) {
-            Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = "Add Habit",
-                modifier = Modifier.size(24.dp)
+            FloatingActionButton(
+                onClick = { showAddHabitDialog = true },
+                containerColor = MaterialTheme.colorScheme.primary,
+                contentColor = MaterialTheme.colorScheme.onPrimary,
+                elevation = FloatingActionButtonDefaults.elevation(
+                    defaultElevation = 8.dp,
+                    pressedElevation = 12.dp
+                )
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Add,
+                    contentDescription = "Add Habit",
+                    modifier = Modifier.size(28.dp)
+                )
+            }
+            
+            // Subtle glow effect
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .background(
+                        brush = Brush.radialGradient(
+                            colors = listOf(
+                                MaterialTheme.colorScheme.primary.copy(alpha = 0.3f),
+                                Color.Transparent
+                            )
+                        ),
+                        shape = CircleShape
+                    )
             )
         }
         
-        // Add Habit Dialog
+        // Enhanced Add Habit Dialog
         if (showAddHabitDialog) {
-            AddHabitDialog(
+            EnhancedAddHabitDialog(
                 onDismiss = { showAddHabitDialog = false },
                 onHabitAdded = { showAddHabitDialog = false }
             )
@@ -604,104 +658,63 @@ fun HomeTab() {
 }
 
 @Composable
-fun HeaderSection() {
-    Column(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Text(
-            text = "Today, ${getCurrentDate()}",
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onBackground,
-            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
-        )
-        
-        Text(
-            text = "Let's make today count! 💪",
-            style = MaterialTheme.typography.bodyLarge,
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
-        )
-    }
-}
-
-@Composable
-fun MotivationalQuoteCard() {
+fun EnhancedHeaderSection() {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.primaryContainer
+            containerColor = Color.White
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 6.dp),
+        shape = RoundedCornerShape(20.dp)
     ) {
-        Column(
-            modifier = Modifier.padding(20.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Icon(
-                imageVector = Icons.Default.Star,
-                contentDescription = null,
-                modifier = Modifier.size(32.dp),
-                tint = MaterialTheme.colorScheme.primary
-            )
-            
-            Spacer(modifier = Modifier.height(12.dp))
-            
-            Text(
-                text = "Small steps every day lead to big changes.",
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onPrimaryContainer,
-                textAlign = TextAlign.Center,
-                fontWeight = androidx.compose.ui.text.font.FontWeight.Medium
-            )
-            
-            Text(
-                text = "— Daily Motivation",
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onPrimaryContainer.copy(alpha = 0.7f),
-                textAlign = TextAlign.Center
-            )
-        }
-    }
-}
-
-@Composable
-fun TodayProgressCard() {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
-        Column(
-            modifier = Modifier.padding(20.dp)
-        ) {
-            Text(
-                text = "Today's Progress",
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurface,
-                fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
-            )
-            
-            Spacer(modifier = Modifier.height(16.dp))
-            
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
-            ) {
-                ProgressStat(
-                    value = "5",
-                    label = "Habits",
-                    icon = Icons.Default.List
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    brush = Brush.linearGradient(
+                        colors = listOf(
+                            Color(0xFF667EEA),
+                            Color(0xFF764BA2)
+                        )
+                    )
                 )
-                ProgressStat(
-                    value = "3",
-                    label = "Completed",
-                    icon = Icons.Default.CheckCircle
+                .padding(24.dp)
+        ) {
+            Column {
+                Text(
+                    text = "Today, ${getCurrentDate()}",
+                    style = MaterialTheme.typography.headlineMedium,
+                    color = Color.White,
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
                 )
-                ProgressStat(
-                    value = "60%",
-                    label = "Progress",
-                    icon = Icons.Default.Star
+                
+                Spacer(modifier = Modifier.height(8.dp))
+                
+                Text(
+                    text = "Let's make today count! 💪",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color.White.copy(alpha = 0.9f)
+                )
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                // Progress indicator
+                LinearProgressIndicator(
+                    progress = 0.6f,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(8.dp)
+                        .clip(RoundedCornerShape(4.dp)),
+                    color = Color.White,
+                    trackColor = Color.White.copy(alpha = 0.3f)
+                )
+                
+                Spacer(modifier = Modifier.height(8.dp))
+                
+                Text(
+                    text = "60% of daily goals completed",
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.White.copy(alpha = 0.8f)
                 )
             }
         }
@@ -709,214 +722,318 @@ fun TodayProgressCard() {
 }
 
 @Composable
-fun ProgressStat(value: String, label: String, icon: ImageVector) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
+fun QuickStatsRow() {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(16.dp)
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            modifier = Modifier.size(24.dp),
-            tint = MaterialTheme.colorScheme.primary
+        QuickStatCard(
+            value = "5",
+            label = "Habits",
+            icon = Icons.Default.List,
+            gradient = Brush.linearGradient(
+                colors = listOf(Color(0xFF4F46E5), Color(0xFF7C3AED))
+            ),
+            modifier = Modifier.weight(1f)
         )
         
-        Spacer(modifier = Modifier.height(8.dp))
-        
-        Text(
-            text = value,
-            style = MaterialTheme.typography.headlineSmall,
-            color = MaterialTheme.colorScheme.onSurface,
-            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+        QuickStatCard(
+            value = "3",
+            label = "Completed",
+            icon = Icons.Default.CheckCircle,
+            gradient = Brush.linearGradient(
+                colors = listOf(Color(0xFF059669), Color(0xFF10B981))
+            ),
+            modifier = Modifier.weight(1f)
         )
         
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
+        QuickStatCard(
+            value = "12",
+            label = "Streak",
+            icon = Icons.Default.Star,
+            gradient = Brush.linearGradient(
+                colors = listOf(Color(0xFFDC2626), Color(0xFFEF4444))
+            ),
+            modifier = Modifier.weight(1f)
         )
     }
 }
 
 @Composable
-fun DailyHabitsList() {
+fun QuickStatCard(
+    value: String,
+    label: String,
+    icon: ImageVector,
+    gradient: Brush,
+    modifier: Modifier = Modifier
+) {
+    Card(
+        modifier = modifier,
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        shape = RoundedCornerShape(16.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(gradient)
+                .padding(20.dp)
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    imageVector = icon,
+                    contentDescription = null,
+                    modifier = Modifier.size(28.dp),
+                    tint = Color.White
+                )
+                
+                Spacer(modifier = Modifier.height(12.dp))
+                
+                Text(
+                    text = value,
+                    style = MaterialTheme.typography.headlineSmall,
+                    color = Color.White,
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                )
+                
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.White.copy(alpha = 0.9f)
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun GradientMotivationalCard() {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
+            containerColor = Color.White
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        shape = RoundedCornerShape(20.dp)
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    brush = Brush.linearGradient(
+                        colors = listOf(
+                            Color(0xFFF59E0B),
+                            Color(0xFFF97316)
+                        )
+                    )
+                )
+                .padding(24.dp)
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Star,
+                    contentDescription = null,
+                    modifier = Modifier.size(36.dp),
+                    tint = Color.White
+                )
+                
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                Text(
+                    text = "Small steps every day lead to big changes.",
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color.White,
+                    textAlign = TextAlign.Center,
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Medium
+                )
+                
+                Spacer(modifier = Modifier.height(8.dp))
+                
+                Text(
+                    text = "— Daily Motivation",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.White.copy(alpha = 0.8f),
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun ModernHabitsSection() {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        shape = RoundedCornerShape(20.dp)
     ) {
         Column(
-            modifier = Modifier.padding(20.dp)
+            modifier = Modifier.padding(24.dp)
         ) {
-            Text(
-                text = "Today's Habits",
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurface,
-                fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = "Today's Habits",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = Color(0xFF1F2937),
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                )
+                
+                Text(
+                    text = "3/5 completed",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color(0xFF6B7280)
+                )
+            }
             
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(20.dp))
             
-            // Sample habits - in real app, these would come from database
-            HabitItem(
+            // Enhanced habit items
+            ModernHabitItem(
                 name = "Drink Water",
                 progress = "3/8 glasses",
                 isCompleted = false,
-                streak = 7
+                streak = 7,
+                color = Color(0xFF3B82F6)
             )
             
-            HabitItem(
+            ModernHabitItem(
                 name = "Morning Walk",
                 progress = "30/30 minutes",
                 isCompleted = true,
-                streak = 12
+                streak = 12,
+                color = Color(0xFF10B981)
             )
             
-            HabitItem(
+            ModernHabitItem(
                 name = "Read Books",
                 progress = "15/30 minutes",
                 isCompleted = false,
-                streak = 5
+                streak = 5,
+                color = Color(0xFF8B5CF6)
             )
             
-            HabitItem(
+            ModernHabitItem(
                 name = "Meditation",
                 progress = "10/10 minutes",
                 isCompleted = true,
-                streak = 8
+                streak = 8,
+                color = Color(0xFFF59E0B)
             )
             
-            HabitItem(
+            ModernHabitItem(
                 name = "Exercise",
                 progress = "0/45 minutes",
                 isCompleted = false,
-                streak = 3
+                streak = 3,
+                color = Color(0xFFEF4444)
             )
         }
     }
 }
 
 @Composable
-fun HabitItem(
+fun ModernHabitItem(
     name: String,
     progress: String,
     isCompleted: Boolean,
-    streak: Int
+    streak: Int,
+    color: Color
 ) {
-    Row(
+    Card(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
+            .padding(vertical = 6.dp),
+        colors = CardDefaults.cardColors(
+            containerColor = if (isCompleted) color.copy(alpha = 0.1f) else Color(0xFFF9FAFB)
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        shape = RoundedCornerShape(12.dp)
     ) {
-        // Checkbox
-        Checkbox(
-            checked = isCompleted,
-            onCheckedChange = { /* TODO: Update habit completion */ },
-            colors = CheckboxDefaults.colors(
-                checkedColor = MaterialTheme.colorScheme.primary
-            )
-        )
-        
-        // Habit details
-        Column(
-            modifier = Modifier.weight(1f)
-        ) {
-            Text(
-                text = name,
-                style = MaterialTheme.typography.bodyLarge,
-                color = MaterialTheme.colorScheme.onSurface,
-                fontWeight = androidx.compose.ui.text.font.FontWeight.Medium
-            )
-            
-            Text(
-                text = progress,
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-            )
-        }
-        
-        // Streak indicator
         Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(
-                imageVector = Icons.Default.Star,
-                contentDescription = null,
-                modifier = Modifier.size(16.dp),
-                tint = Color(0xFFFF6B35)
-            )
-            
-            Spacer(modifier = Modifier.width(4.dp))
-            
-            Text(
-                text = "$streak",
-                style = MaterialTheme.typography.bodyMedium,
-                color = Color(0xFFFF6B35),
-                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
-            )
-        }
-    }
-}
-
-@Composable
-fun WeeklyProgressCalendar() {
-    Card(
-        modifier = Modifier.fillMaxWidth(),
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surface
-        ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
-        Column(
-            modifier = Modifier.padding(20.dp)
-        ) {
-            Text(
-                text = "This Week",
-                style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSurface,
-                fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
-            )
-            
-            Spacer(modifier = Modifier.height(16.dp))
-            
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
+            // Enhanced checkbox
+            Box(
+                modifier = Modifier
+                    .size(24.dp)
+                    .background(
+                        color = if (isCompleted) color else Color(0xFFE5E7EB),
+                        shape = RoundedCornerShape(6.dp)
+                    ),
+                contentAlignment = Alignment.Center
             ) {
-                listOf("M", "T", "W", "T", "F", "S", "S").forEachIndexed { index, day ->
-                    Column(
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = day,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7f)
-                        )
-                        
-                        Spacer(modifier = Modifier.height(4.dp))
-                        
-                        Box(
-                            modifier = Modifier
-                                .size(24.dp)
-                                .background(
-                                    color = if (index < 5) MaterialTheme.colorScheme.primary 
-                                           else MaterialTheme.colorScheme.surfaceVariant,
-                                    shape = CircleShape
-                                ),
-                            contentAlignment = Alignment.Center
-                        ) {
-                            if (index < 5) {
-                                Icon(
-                                    imageVector = Icons.Default.Check,
-                                    contentDescription = null,
-                                    modifier = Modifier.size(16.dp),
-                                    tint = MaterialTheme.colorScheme.onPrimary
-                                )
-                            }
-                        }
-                    }
+                if (isCompleted) {
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                        tint = Color.White
+                    )
+                }
+            }
+            
+            Spacer(modifier = Modifier.width(16.dp))
+            
+            // Habit details
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = name,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color(0xFF1F2937),
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Medium
+                )
+                
+                Text(
+                    text = progress,
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color(0xFF6B7280)
+                )
+            }
+            
+            // Enhanced streak indicator
+            Card(
+                colors = CardDefaults.cardColors(
+                    containerColor = color.copy(alpha = 0.1f)
+                ),
+                shape = RoundedCornerShape(8.dp)
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Star,
+                        contentDescription = null,
+                        modifier = Modifier.size(14.dp),
+                        tint = color
+                    )
+                    
+                    Spacer(modifier = Modifier.width(4.dp))
+                    
+                    Text(
+                        text = "$streak",
+                        style = MaterialTheme.typography.bodySmall,
+                        color = color,
+                        fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                    )
                 }
             }
         }
@@ -924,140 +1041,334 @@ fun WeeklyProgressCalendar() {
 }
 
 @Composable
-fun StreaksSection() {
+fun EnhancedProgressSection() {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.secondaryContainer
+            containerColor = Color.White
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        shape = RoundedCornerShape(20.dp)
     ) {
         Column(
-            modifier = Modifier.padding(20.dp)
+            modifier = Modifier.padding(24.dp)
         ) {
             Text(
-                text = "🔥 Current Streaks",
+                text = "Progress Overview",
                 style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onSecondaryContainer,
-                fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
+                color = Color(0xFF1F2937),
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
             )
             
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(20.dp))
+            
+            // Progress bars
+            ProgressBarItem("Habits Completed", 0.6f, Color(0xFF10B981))
+            ProgressBarItem("Weekly Goal", 0.8f, Color(0xFF3B82F6))
+            ProgressBarItem("Monthly Streak", 0.9f, Color(0xFF8B5CF6))
+        }
+    }
+}
+
+@Composable
+fun ProgressBarItem(label: String, progress: Float, color: Color) {
+    Column(
+        modifier = Modifier.padding(vertical = 8.dp)
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween
+        ) {
+            Text(
+                text = label,
+                style = MaterialTheme.typography.bodyMedium,
+                color = Color(0xFF374151)
+            )
+            
+            Text(
+                text = "${(progress * 100).toInt()}%",
+                style = MaterialTheme.typography.bodyMedium,
+                color = color,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+            )
+        }
+        
+        Spacer(modifier = Modifier.height(8.dp))
+        
+        LinearProgressIndicator(
+            progress = progress,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(8.dp)
+                .clip(RoundedCornerShape(4.dp)),
+            color = color,
+            trackColor = color.copy(alpha = 0.2f)
+        )
+    }
+}
+
+@Composable
+fun ModernWeeklyCalendar() {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        shape = RoundedCornerShape(20.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(24.dp)
+        ) {
+            Text(
+                text = "This Week",
+                style = MaterialTheme.typography.titleLarge,
+                color = Color(0xFF1F2937),
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+            )
+            
+            Spacer(modifier = Modifier.height(20.dp))
             
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                StreakItem("Morning Walk", 12, Icons.Default.Star)
-                StreakItem("Meditation", 8, Icons.Default.Star)
-                StreakItem("Reading", 5, Icons.Default.Star)
+                listOf("M", "T", "W", "T", "F", "S", "S").forEachIndexed { index, day ->
+                    ModernCalendarDay(
+                        day = day,
+                        isCompleted = index < 5,
+                        isToday = index == 2
+                    )
+                }
             }
         }
     }
 }
 
 @Composable
-fun StreakItem(name: String, days: Int, icon: ImageVector) {
+fun ModernCalendarDay(
+    day: String,
+    isCompleted: Boolean,
+    isToday: Boolean
+) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            modifier = Modifier.size(32.dp),
-            tint = MaterialTheme.colorScheme.onSecondaryContainer
+        Text(
+            text = day,
+            style = MaterialTheme.typography.bodySmall,
+            color = Color(0xFF6B7280),
+            fontWeight = androidx.compose.ui.text.font.FontWeight.Medium
         )
         
         Spacer(modifier = Modifier.height(8.dp))
         
+        Box(
+            modifier = Modifier
+                .size(32.dp)
+                .background(
+                    color = when {
+                        isToday -> Color(0xFF3B82F6)
+                        isCompleted -> Color(0xFF10B981)
+                        else -> Color(0xFFF3F4F6)
+                    },
+                    shape = CircleShape
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            if (isCompleted || isToday) {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = null,
+                    modifier = Modifier.size(18.dp),
+                    tint = Color.White
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun AchievementStreaksSection() {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        shape = RoundedCornerShape(20.dp)
+    ) {
+        Column(
+            modifier = Modifier.padding(24.dp)
+        ) {
+            Text(
+                text = "🔥 Achievement Streaks",
+                style = MaterialTheme.typography.titleLarge,
+                color = Color(0xFF1F2937),
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+            )
+            
+            Spacer(modifier = Modifier.height(20.dp))
+            
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceEvenly
+            ) {
+                ModernStreakItem("Morning Walk", 12, Color(0xFF10B981))
+                ModernStreakItem("Meditation", 8, Color(0xFF8B5CF6))
+                ModernStreakItem("Reading", 5, Color(0xFFF59E0B))
+            }
+        }
+    }
+}
+
+@Composable
+fun ModernStreakItem(name: String, days: Int, color: Color) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Box(
+            modifier = Modifier
+                .size(48.dp)
+                .background(
+                    color = color.copy(alpha = 0.1f),
+                    shape = CircleShape
+                ),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                imageVector = Icons.Default.Star,
+                contentDescription = null,
+                modifier = Modifier.size(24.dp),
+                tint = color
+            )
+        }
+        
+        Spacer(modifier = Modifier.height(12.dp))
+        
         Text(
             text = "$days days",
             style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onSecondaryContainer,
+            color = color,
             fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
         )
         
         Text(
             text = name,
             style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onSecondaryContainer.copy(alpha = 0.8f),
+            color = Color(0xFF6B7280),
             textAlign = TextAlign.Center
         )
     }
 }
 
 @Composable
-fun LeaderboardSection() {
+fun GradientRecordsSection() {
     Card(
         modifier = Modifier.fillMaxWidth(),
         colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.tertiaryContainer
+            containerColor = Color.White
         ),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        shape = RoundedCornerShape(20.dp)
     ) {
         Column(
-            modifier = Modifier.padding(20.dp)
+            modifier = Modifier.padding(24.dp)
         ) {
             Text(
                 text = "🏆 Personal Records",
                 style = MaterialTheme.typography.titleLarge,
-                color = MaterialTheme.colorScheme.onTertiaryContainer,
-                fontWeight = androidx.compose.ui.text.font.FontWeight.SemiBold
+                color = Color(0xFF1F2937),
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
             )
             
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(20.dp))
             
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceEvenly
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                RecordItem("Best Streak", "15 days", Icons.Default.Star)
-                RecordItem("This Month", "85%", Icons.Default.DateRange)
-                RecordItem("Total Habits", "12", Icons.Default.List)
+                Box(modifier = Modifier.weight(1f)) {
+                    GradientRecordItem("Best Streak", "15 days", Color(0xFFDC2626))
+                }
+                Box(modifier = Modifier.weight(1f)) {
+                    GradientRecordItem("This Month", "85%", Color(0xFF059669))
+                }
+                Box(modifier = Modifier.weight(1f)) {
+                    GradientRecordItem("Total Habits", "12", Color(0xFF7C3AED))
+                }
             }
         }
     }
 }
 
 @Composable
-fun RecordItem(label: String, value: String, icon: ImageVector) {
-    Column(
-        horizontalAlignment = Alignment.CenterHorizontally
+fun GradientRecordItem(label: String, value: String, color: Color) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        colors = CardDefaults.cardColors(
+            containerColor = Color.White
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp),
+        shape = RoundedCornerShape(12.dp)
     ) {
-        Icon(
-            imageVector = icon,
-            contentDescription = null,
-            modifier = Modifier.size(32.dp),
-            tint = MaterialTheme.colorScheme.onTertiaryContainer
-        )
-        
-        Spacer(modifier = Modifier.height(8.dp))
-        
-        Text(
-            text = value,
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onTertiaryContainer,
-            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
-        )
-        
-        Text(
-            text = label,
-            style = MaterialTheme.typography.bodySmall,
-            color = MaterialTheme.colorScheme.onTertiaryContainer.copy(alpha = 0.8f),
-            textAlign = TextAlign.Center
-        )
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(
+                    brush = Brush.linearGradient(
+                        colors = listOf(
+                            color.copy(alpha = 0.1f),
+                            color.copy(alpha = 0.05f)
+                        )
+                    )
+                )
+                .padding(16.dp)
+        ) {
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Star,
+                    contentDescription = null,
+                    modifier = Modifier.size(28.dp),
+                    tint = color
+                )
+                
+                Spacer(modifier = Modifier.height(8.dp))
+                
+                Text(
+                    text = value,
+                    style = MaterialTheme.typography.titleMedium,
+                    color = color,
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                )
+                
+                Text(
+                    text = label,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color(0xFF6B7280),
+                    textAlign = TextAlign.Center
+                )
+            }
+        }
     }
 }
 
 @Composable
-fun AddHabitDialog(onDismiss: () -> Unit, onHabitAdded: () -> Unit) {
+fun EnhancedAddHabitDialog(onDismiss: () -> Unit, onHabitAdded: () -> Unit) {
     var habitName by remember { mutableStateOf("") }
     var habitGoal by remember { mutableStateOf("") }
+    var selectedCategory by remember { mutableStateOf("Health") }
     
     AlertDialog(
         onDismissRequest = onDismiss,
         title = {
-            Text("Add New Habit")
+            Text(
+                "Add New Habit",
+                style = MaterialTheme.typography.titleLarge,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+            )
         },
         text = {
             Column(
@@ -1067,34 +1378,66 @@ fun AddHabitDialog(onDismiss: () -> Unit, onHabitAdded: () -> Unit) {
                     value = habitName,
                     onValueChange = { habitName = it },
                     label = { Text("Habit Name") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp)
                 )
                 
                 OutlinedTextField(
                     value = habitGoal,
                     onValueChange = { habitGoal = it },
                     label = { Text("Daily Goal (e.g., 8 glasses, 30 minutes)") },
-                    modifier = Modifier.fillMaxWidth()
+                    modifier = Modifier.fillMaxWidth(),
+                    shape = RoundedCornerShape(12.dp)
                 )
+                
+                // Category selector
+                Text(
+                    text = "Category",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color(0xFF374151)
+                )
+                
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    listOf("Health", "Fitness", "Learning", "Mindfulness").forEach { category ->
+                        FilterChip(
+                            selected = selectedCategory == category,
+                            onClick = { selectedCategory = category },
+                            label = { Text(category) },
+                            colors = FilterChipDefaults.filterChipColors(
+                                selectedContainerColor = MaterialTheme.colorScheme.primary,
+                                selectedLabelColor = MaterialTheme.colorScheme.onPrimary
+                            )
+                        )
+                    }
+                }
             }
         },
         confirmButton = {
-            TextButton(
+            Button(
                 onClick = {
                     if (habitName.isNotBlank()) {
                         // TODO: Save habit to database
                         onHabitAdded()
                     }
-                }
+                },
+                shape = RoundedCornerShape(12.dp)
             ) {
                 Text("Add Habit")
             }
         },
         dismissButton = {
-            TextButton(onClick = onDismiss) {
+            TextButton(
+                onClick = onDismiss,
+                shape = RoundedCornerShape(12.dp)
+            ) {
                 Text("Cancel")
             }
-        }
+        },
+        containerColor = Color.White,
+        shape = RoundedCornerShape(20.dp)
     )
 }
 
