@@ -63,15 +63,14 @@ fun HabitTrackingApp() {
     var currentScreen by remember { mutableStateOf<Screen>(Screen.Welcome) }
     var isLogin by remember { mutableStateOf(false) }
     
-    // Initialize with sample data to showcase features
     var userProfile by remember { 
         mutableStateOf(
             UserProfile(
-                username = "HabitHero",
-                currentStreak = 12,
-                longestStreak = 45,
-                totalHabits = 8,
-                completedHabits = 6
+                username = "",
+                currentStreak = 0,
+                longestStreak = 0,
+                totalHabits = 0,
+                completedHabits = 0
             )
         ) 
     }
@@ -79,54 +78,10 @@ fun HabitTrackingApp() {
     var aiCoach by remember { 
         mutableStateOf(
             AIHabitCoach(
-                insights = listOf(
-                    AIInsight(
-                        id = "1",
-                        title = "Morning Exercise Success Pattern",
-                        description = "You're 85% more likely to complete your workout when done before 8 AM",
-                        type = InsightType.SUCCESS_PATTERN,
-                        confidence = 0.92f
-                    ),
-                    AIInsight(
-                        id = "2",
-                        title = "Weekend Reading Struggle",
-                        description = "Your reading habit has a 70% failure rate on weekends",
-                        type = InsightType.FAILURE_PATTERN,
-                        confidence = 0.78f
-                    ),
-                    AIInsight(
-                        id = "3",
-                        title = "Meditation Mood Boost",
-                        description = "Daily meditation improves your mood by 40% on average",
-                        type = InsightType.MOOD_CORRELATION,
-                        confidence = 0.85f
-                    )
-                ),
-                predictions = listOf(
-                    HabitPrediction(
-                        habitId = "reading",
-                        habitName = "Read 30 minutes",
-                        failureProbability = 0.7f,
-                        riskFactors = listOf("Weekend schedule", "Evening fatigue"),
-                        preventionStrategies = listOf("Set weekend reminders", "Read in the morning")
-                    ),
-                    HabitPrediction(
-                        habitId = "workout",
-                        habitName = "Morning workout",
-                        failureProbability = 0.3f,
-                        riskFactors = listOf("Late night sleep"),
-                        preventionStrategies = listOf("Early bedtime", "Prepare workout clothes")
-                    )
-                ),
-                recommendations = listOf(
-                    HabitRecommendation(
-                        habitName = "Hydration Tracking",
-                        description = "Track water intake to improve overall health",
-                        difficulty = Difficulty.EASY,
-                        expectedImpact = 0.8f,
-                        bestTime = "Throughout the day"
-                    )
-                )
+                insights = emptyList(),
+                predictions = emptyList(),
+                recommendations = emptyList(),
+                moodCorrelations = emptyList()
             )
         ) 
     }
@@ -134,42 +89,14 @@ fun HabitTrackingApp() {
     var gameProgress by remember { 
         mutableStateOf(
             GameProgress(
-                level = 7,
-                experience = 650,
-                experienceToNextLevel = 1000,
-                coins = 1250,
-                achievements = listOf(
-                    Achievement(
-                        id = "1",
-                        name = "First Steps",
-                        description = "Complete your first habit",
-                        icon = "🌟",
-                        isUnlocked = true,
-                        reward = Reward(RewardType.COINS, 100, "100 Coins")
-                    ),
-                    Achievement(
-                        id = "2",
-                        name = "Week Warrior",
-                        description = "Complete habits for 7 days straight",
-                        icon = "🔥",
-                        isUnlocked = true,
-                        reward = Reward(RewardType.XP, 200, "200 XP")
-                    ),
-                    Achievement(
-                        id = "3",
-                        name = "Habit Master",
-                        description = "Reach level 5",
-                        icon = "👑",
-                        isUnlocked = true,
-                        reward = Reward(RewardType.THEME, 1, "Premium Theme")
-                    )
-                ),
+                level = 1,
+                experience = 0,
+                experienceToNextLevel = 100,
+                coins = 0,
+                achievements = emptyList(),
                 virtualCharacter = VirtualCharacter(
-                    name = "Habit Hero",
-                    pets = listOf(
-                        VirtualPet("Fluffy", PetType.DOG, 3, 0.9f, 2),
-                        VirtualPet("Sparkle", PetType.UNICORN, 5, 0.95f, 3)
-                    )
+                    name = "",
+                    pets = emptyList()
                 )
             )
         ) 
@@ -178,49 +105,9 @@ fun HabitTrackingApp() {
     var socialChallenges by remember { 
         mutableStateOf(
             SocialChallenges(
-                activeChallenges = listOf(
-                    Challenge(
-                        id = "1",
-                        name = "30-Day Fitness Challenge",
-                        description = "Complete daily workouts for 30 days",
-                        type = ChallengeType.MONTHLY_CHALLENGE,
-                        participants = listOf("user1", "user2", "user3", "user4"),
-                        startDate = System.currentTimeMillis() - 86400000 * 5, // 5 days ago
-                        endDate = System.currentTimeMillis() + 86400000 * 25, // 25 days left
-                        rewards = listOf(Reward(RewardType.COINS, 500, "500 Coins")),
-                        leaderboard = emptyList()
-                    ),
-                    Challenge(
-                        id = "2",
-                        name = "Reading Race",
-                        description = "Read the most pages this week",
-                        type = ChallengeType.WEEKLY_GOAL,
-                        participants = listOf("user1", "user2", "user5"),
-                        startDate = System.currentTimeMillis() - 86400000 * 2,
-                        endDate = System.currentTimeMillis() + 86400000 * 5,
-                        rewards = listOf(Reward(RewardType.XP, 300, "300 XP")),
-                        leaderboard = emptyList()
-                    )
-                ),
-                friends = listOf(
-                    Friend("1", "Sarah", "avatar1", 8, true, System.currentTimeMillis()),
-                    Friend("2", "Mike", "avatar2", 6, false, System.currentTimeMillis() - 3600000),
-                    Friend("3", "Emma", "avatar3", 9, true, System.currentTimeMillis()),
-                    Friend("4", "Alex", "avatar4", 5, false, System.currentTimeMillis() - 7200000),
-                    Friend("5", "Lisa", "avatar5", 7, true, System.currentTimeMillis())
-                ),
-                groupChallenges = listOf(
-                    GroupChallenge(
-                        id = "1",
-                        name = "Team Wellness",
-                        description = "Complete wellness habits as a team",
-                        members = listOf("user1", "user2", "user3"),
-                        goal = "Complete 90% of daily wellness habits",
-                        progress = 0.75f,
-                        deadline = System.currentTimeMillis() + 86400000 * 7,
-                        rewards = listOf(Reward(RewardType.THEME, 1, "Team Theme"))
-                    )
-                )
+                activeChallenges = emptyList(),
+                friends = emptyList(),
+                groupChallenges = emptyList()
             )
         ) 
     }
@@ -615,7 +502,7 @@ fun AuthScreen(onBackToWelcome: () -> Unit, onLoginSuccess: () -> Unit) {
         ) {
             IconButton(onClick = onBackToWelcome) {
                 Icon(
-                    imageVector = Icons.Default.ArrowBack,
+                    imageVector = Icons.Default.KeyboardArrowLeft,
                     contentDescription = "Back",
                     tint = MaterialTheme.colorScheme.primary
                 )
@@ -1278,7 +1165,7 @@ fun EnhancedHeaderSection() {
                 
                 // Progress indicator
                 LinearProgressIndicator(
-                    progress = 0.6f,
+                    progress = 0.0f,
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(8.dp)
@@ -1290,7 +1177,7 @@ fun EnhancedHeaderSection() {
                 Spacer(modifier = Modifier.height(8.dp))
                 
                 Text(
-                    text = "60% of daily goals completed",
+                    text = "0% of daily goals completed",
                     style = MaterialTheme.typography.bodySmall,
                     color = Color.White.copy(alpha = 0.8f)
                 )
@@ -1316,7 +1203,7 @@ fun QuickStatsRow() {
             modifier = Modifier.weight(1f)
         ) {
             QuickStatCard(
-                value = "5",
+                value = "0",
                 label = "Habits",
                 icon = Icons.Default.List,
                 gradient = Brush.linearGradient(
@@ -1336,7 +1223,7 @@ fun QuickStatsRow() {
             modifier = Modifier.weight(1f)
         ) {
             QuickStatCard(
-                value = "3",
+                value = "0",
                 label = "Completed",
                 icon = Icons.Default.CheckCircle,
                 gradient = Brush.linearGradient(
@@ -1356,7 +1243,7 @@ fun QuickStatsRow() {
             modifier = Modifier.weight(1f)
         ) {
             QuickStatCard(
-                value = "12",
+                                    value = "0",
                 label = "Streak",
                 icon = Icons.Default.Star,
                 gradient = Brush.linearGradient(
@@ -1504,7 +1391,7 @@ fun ModernHabitsSection() {
                 )
                 
                 Text(
-                    text = "3/5 completed",
+                    text = "0/0 completed",
                     style = MaterialTheme.typography.bodyMedium,
                     color = Color(0xFF6B7280)
                 )
@@ -1512,45 +1399,13 @@ fun ModernHabitsSection() {
             
             Spacer(modifier = Modifier.height(20.dp))
             
-            // Enhanced habit items
+            // Sample habit items - will be populated from backend
             ModernHabitItem(
-                name = "Drink Water",
-                progress = "3/8 glasses",
+                name = "Add your first habit",
+                progress = "0/0 minutes",
                 isCompleted = false,
-                streak = 7,
-                color = Color(0xFF3B82F6)
-            )
-            
-            ModernHabitItem(
-                name = "Morning Walk",
-                progress = "30/30 minutes",
-                isCompleted = true,
-                streak = 12,
-                color = Color(0xFF10B981)
-            )
-            
-            ModernHabitItem(
-                name = "Read Books",
-                progress = "15/30 minutes",
-                isCompleted = false,
-                streak = 5,
+                streak = 0,
                 color = Color(0xFF8B5CF6)
-            )
-            
-            ModernHabitItem(
-                name = "Meditation",
-                progress = "10/10 minutes",
-                isCompleted = true,
-                streak = 8,
-                color = Color(0xFFF59E0B)
-            )
-            
-            ModernHabitItem(
-                name = "Exercise",
-                progress = "0/45 minutes",
-                isCompleted = false,
-                streak = 3,
-                color = Color(0xFFEF4444)
             )
         }
     }
@@ -1675,9 +1530,9 @@ fun EnhancedProgressSection() {
             Spacer(modifier = Modifier.height(20.dp))
             
             // Progress bars
-            ProgressBarItem("Habits Completed", 0.6f, Color(0xFF10B981))
-            ProgressBarItem("Weekly Goal", 0.8f, Color(0xFF3B82F6))
-            ProgressBarItem("Monthly Streak", 0.9f, Color(0xFF8B5CF6))
+            ProgressBarItem("Habits Completed", 0.0f, Color(0xFF10B981))
+            ProgressBarItem("Weekly Goal", 0.0f, Color(0xFF3B82F6))
+            ProgressBarItem("Monthly Streak", 0.0f, Color(0xFF8B5CF6))
         }
     }
 }
@@ -1826,9 +1681,8 @@ fun AchievementStreaksSection() {
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceEvenly
             ) {
-                ModernStreakItem("Morning Walk", 12, Color(0xFF10B981))
-                ModernStreakItem("Meditation", 8, Color(0xFF8B5CF6))
-                ModernStreakItem("Reading", 5, Color(0xFFF59E0B))
+                // Sample streak items - will be populated from backend
+                ModernStreakItem("Start building streaks", 0, Color(0xFF10B981))
             }
         }
     }
@@ -1901,13 +1755,13 @@ fun GradientRecordsSection() {
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
                 Box(modifier = Modifier.weight(1f)) {
-                    GradientRecordItem("Best Streak", "15 days", Color(0xFFDC2626))
+                    GradientRecordItem("Best Streak", "0 days", Color(0xFFDC2626))
                 }
                 Box(modifier = Modifier.weight(1f)) {
-                    GradientRecordItem("This Month", "85%", Color(0xFF059669))
+                    GradientRecordItem("This Month", "0%", Color(0xFF059669))
                 }
                 Box(modifier = Modifier.weight(1f)) {
-                    GradientRecordItem("Total Habits", "12", Color(0xFF7C3AED))
+                    GradientRecordItem("Total Habits", "0", Color(0xFF7C3AED))
                 }
             }
         }
@@ -2320,7 +2174,7 @@ fun SideMenuItem(
             }
             
             Icon(
-                imageVector = Icons.Default.ArrowForward,
+                imageVector = Icons.Default.KeyboardArrowRight,
                 contentDescription = null,
                 modifier = Modifier.size(20.dp),
                 tint = Color.White.copy(alpha = 0.6f)
@@ -3013,6 +2867,7 @@ fun SocialTab(socialChallenges: SocialChallenges, userProfile: UserProfile) {
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun CalendarPanel(
     selectedDate: java.time.LocalDate,
@@ -3030,53 +2885,105 @@ fun CalendarPanel(
                 .clickable { onDismiss() }
         )
         
-        // Calendar Content
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(
-                    brush = Brush.verticalGradient(
-                        colors = listOf(
-                            Color(0xFF667EEA),
-                            Color(0xFF764BA2),
-                            Color(0xFFF093FB)
+        // Calendar Content with Navigation Bars
+        Scaffold(
+            topBar = {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            brush = Brush.linearGradient(
+                                colors = listOf(
+                                    Color(0xFFFF8A65), // Light orange
+                                    Color(0xFFFF7043), // Medium orange
+                                    Color(0xFFFF5722)  // Deep orange
+                                )
+                            )
+                        )
+                ) {
+                    TopAppBar(
+                        title = { },
+                        navigationIcon = {
+                            IconButton(onClick = onDismiss) {
+                                Icon(
+                                    imageVector = Icons.Default.KeyboardArrowLeft,
+                                    contentDescription = "Back",
+                                    tint = Color.White
+                                )
+                            }
+                        },
+                        actions = {
+                            Text(
+                                text = "📅 Habit Calendar",
+                                style = MaterialTheme.typography.titleLarge,
+                                color = Color.White,
+                                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                            )
+                            
+                            Spacer(modifier = Modifier.width(16.dp))
+                            
+                            IconButton(onClick = { /* TODO: Add new habit */ }) {
+                                Icon(
+                                    imageVector = Icons.Default.Add,
+                                    contentDescription = "Add Habit",
+                                    tint = Color.White
+                                )
+                            }
+                        },
+                        colors = TopAppBarDefaults.topAppBarColors(
+                            containerColor = Color.Transparent
                         )
                     )
-                )
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp)
-        ) {
-            // Header
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                IconButton(onClick = onDismiss) {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = "Close",
-                        tint = Color.White,
-                        modifier = Modifier.size(24.dp)
-                    )
                 }
-                
-                Text(
-                    text = "📅 Habit Calendar",
-                    style = MaterialTheme.typography.headlineMedium,
-                    color = Color.White,
-                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
-                )
-                
-                IconButton(onClick = { /* TODO: Add new habit */ }) {
-                    Icon(
-                        imageVector = Icons.Default.Add,
-                        contentDescription = "Add Habit",
-                        tint = Color.White,
-                        modifier = Modifier.size(24.dp)
+            },
+            bottomBar = {
+                NavigationBar(
+                    containerColor = Color.White,
+                    tonalElevation = 8.dp
+                ) {
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
+                        label = { Text("Home") },
+                        selected = false,
+                        onClick = onDismiss
+                    )
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.List, contentDescription = "Habits") },
+                        label = { Text("Habits") },
+                        selected = false,
+                        onClick = onDismiss
+                    )
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.Star, contentDescription = "Progress") },
+                        selected = true,
+                        onClick = { },
+                        label = { Text("Calendar") }
+                    )
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
+                        label = { Text("Settings") },
+                        selected = false,
+                        onClick = onDismiss
                     )
                 }
             }
+        ) { paddingValues ->
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(
+                                Color(0xFF667EEA),
+                                Color(0xFF764BA2),
+                                Color(0xFFF093FB)
+                            )
+                        )
+                    )
+                    .verticalScroll(rememberScrollState())
+                    .padding(paddingValues)
+                    .padding(16.dp)
+            ) {
             
             Spacer(modifier = Modifier.height(16.dp))
             
@@ -3100,7 +3007,7 @@ fun CalendarPanel(
                                 onDateSelected(selectedDate.minusMonths(1))
                             }
                         ) {
-                            Icon(Icons.Default.ArrowBack, contentDescription = "Previous Month")
+                            Icon(Icons.Default.KeyboardArrowLeft, contentDescription = "Previous Month")
                         }
                         
                         Text(
@@ -3114,7 +3021,7 @@ fun CalendarPanel(
                                 onDateSelected(selectedDate.plusMonths(1))
                             }
                         ) {
-                            Icon(Icons.Default.ArrowForward, contentDescription = "Next Month")
+                            Icon(Icons.Default.KeyboardArrowRight, contentDescription = "Next Month")
                         }
                     }
                     
@@ -3242,7 +3149,7 @@ fun CalendarPanel(
                     ) {
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
-                                text = "5",
+                                text = "0",
                                 style = MaterialTheme.typography.headlineSmall,
                                 color = MaterialTheme.colorScheme.primary,
                                 fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
@@ -3254,7 +3161,7 @@ fun CalendarPanel(
                         }
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
-                                text = "3",
+                                text = "0",
                                 style = MaterialTheme.typography.headlineSmall,
                                 color = Color.Green,
                                 fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
@@ -3266,7 +3173,7 @@ fun CalendarPanel(
                         }
                         Column(horizontalAlignment = Alignment.CenterHorizontally) {
                             Text(
-                                text = "60%",
+                                text = "0%",
                                 style = MaterialTheme.typography.headlineSmall,
                                 color = Color(0xFFFF9800),
                                 fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
@@ -3369,7 +3276,7 @@ fun CalendarPanel(
                         horizontalArrangement = Arrangement.SpaceEvenly,
                         verticalAlignment = Alignment.Bottom
                     ) {
-                        listOf(65, 80, 45, 90, 75, 85, 70).forEachIndexed { index, percentage ->
+                        listOf(0, 0, 0, 0, 0, 0, 0).forEachIndexed { index, percentage ->
                             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                                 Box(
                                     modifier = Modifier
@@ -3394,6 +3301,7 @@ fun CalendarPanel(
                     }
                 }
             }
+        }
         }
     }
 }
