@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="1080dp"
+    android:height="1920dp"
+    android:viewportWidth="1080"
+    android:viewportHeight="1920">
+
+    <!-- Full Screen Background -->
+    <path
+        android:fillColor="#F5F5DC"
+        android:pathData="M0,0h1080v1920h-1080z" />
+
+    <!-- Running Figure (Central) -->
+    <path
+        android:fillColor="#FF9800"
+        android:pathData="M540,960m-25,0a25,25 0,1 1,50 0a25,25 0,1 1,-50 0" /> <!-- Head -->
+    <path
+        android:fillColor="#FF9800"
+        android:pathData="M540,1000 L580,1080 L500,1080 Z" /> <!-- Torso -->
+    <path
+        android:fillColor="#FF9800"
+        android:pathData="M580,1080 L620,1180 L580,1120 Z" /> <!-- Right Arm -->
+    <path
+        android:fillColor="#FF9800"
+        android:pathData="M500,1080 L460,1180 L500,1120 Z" /> <!-- Left Arm -->
+    <path
+        android:fillColor="#FF9800"
+        android:pathData="M580,1080 L600,1280 L520,1280 Z" /> <!-- Right Leg -->
+    <path
+        android:fillColor="#FF9800"
+        android:pathData="M500,1080 L520,1280 L480,1280 Z" /> <!-- Left Leg -->
+
+    <!-- Sun/Starburst (Upper Left) -->
+    <path
+        android:fillColor="#FF9800"
+        android:pathData="M200,200m-15,0a15,15 0,1 1,30 0a15,15 0,1 1,-30 0" />
+    <path
+        android:fillColor="#FF9800"
+        android:pathData="M200,150 L200,120 M200,280 L200,250 M150,200 L120,200 M280,200 L320,200 M150,150 L120,120 M250,250 L280,280 M150,250 L120,280 M250,150 L280,120" />
+
+    <!-- Dots (Left Side) -->
+    <path
+        android:fillColor="#FF9800"
+        android:pathData="M180,300m-5,0a5,5 0,1 1,10 0a5,5 0,1 1,-10 0" />
+    <path
+        android:fillColor="#FF9800"
+        android:pathData="M220,400m-4,0a4,4 0,1 1,8 0a4,4 0,1 1,-8 0" />
+    <path
+        android:fillColor="#FF9800"
+        android:pathData="M150,500m-6,0a6,6 0,1 1,12 0a6,6 0,1 1,-12 0" />
+
+    <!-- Dumbbell (Lower Left) -->
+    <path
+        android:strokeColor="#FF9800"
+        android:strokeWidth="5"
+        android:pathData="M200,1400 L250,1400 M150,1400 L120,1400 M280,1400 L320,1400" />
+
+    <!-- Wavy Lines (Upper Right) -->
+    <path
+        android:strokeColor="#FF9800"
+        android:strokeWidth="3"
+        android:pathData="M800,200 Q850,150 900,200 Q950,250 1000,200" />
+    <path
+        android:strokeColor="#FF9800"
+        android:strokeWidth="3"
+        android:pathData="M800,250 Q850,200 900,250 Q950,300 1000,250" />
+
+    <!-- Meditation Figure (Right Side) -->
+    <path
+        android:strokeColor="#FF9800"
+        android:strokeWidth="3"
+        android:pathData="M900,960m-18,0a18,18 0,1 1,36 0a18,18 0,1 1,-36 0" /> <!-- Head -->
+    <path
+        android:strokeColor="#FF9800"
+        android:strokeWidth="3"
+        android:pathData="M900,990 L900,1050" /> <!-- Body -->
+    <path
+        android:strokeColor="#FF9800"
+        android:strokeWidth="3"
+        android:pathData="M880,1020 L920,1020" /> <!-- Arms -->
+    <path
+        android:strokeColor="#FF9800"
+        android:strokeWidth="3"
+        android:pathData="M900,1050 L880,1150 L920,1150 Z" /> <!-- Legs -->
+
+    <!-- Plus Sign -->
+    <path
+        android:fillColor="#FF9800"
+        android:pathData="M750,1020 L750,990 L720,990 L720,1020 L690,1020 L690,1050 L720,1050 L720,1080 L750,1080 L750,1050 L780,1050 L780,1020 Z" />
+
+    <!-- Curved Lines and Dots (Lower Right) -->
+    <path
+        android:strokeColor="#FF9800"
+        android:strokeWidth="3"
+        android:pathData="M800,1400 Q850,1350 900,1400" />
+    <path
+        android:strokeColor="#FF9800"
+        android:strokeWidth="3"
+        android:pathData="M820,1500 Q870,1450 920,1500" />
+    <path
+        android:fillColor="#FF9800"
+        android:pathData="M900,1350m-4,0a4,4 0,1 1,8 0a4,4 0,1 1,-8 0" />
+    <path
+        android:fillColor="#FF9800"
+        android:pathData="M850,1600m-5,0a5,5 0,1 1,10 0a5,5 0,1 1,-10 0" />
+
+    <!-- Additional decorative elements for better coverage -->
+    <path
+        android:fillColor="#FF9800"
+        android:pathData="M100,800m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0" />
+    <path
+        android:fillColor="#FF9800"
+        android:pathData="M150,900m-4,0a4,4 0,1 1,8 0a4,4 0,1 1,-8 0" />
+    <path
+        android:fillColor="#FF9800"
+        android:pathData="M950,600m-3,0a3,3 0,1 1,6 0a3,3 0,1 1,-6 0" />
+    <path
+        android:fillColor="#FF9800"
+        android:pathData="M1000,700m-4,0a4,4 0,1 1,8 0a4,4 0,1 1,-8 0" />
+
+</vector>
