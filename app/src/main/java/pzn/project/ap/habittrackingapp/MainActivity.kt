@@ -521,7 +521,7 @@ fun WelcomeScreen(onGetStarted: () -> Unit) {
             
             // Main Heading
             Text(
-                text = "Habit Tracking",
+                text = "Kultivate....!",
                 style = MaterialTheme.typography.displayLarge,
                 color = MaterialTheme.colorScheme.onBackground,
                 textAlign = TextAlign.Center,
@@ -532,7 +532,7 @@ fun WelcomeScreen(onGetStarted: () -> Unit) {
             
             // Subtitle
             Text(
-                text = "Transform your life, one habit at a time",
+                text = "Cultivate your best self through mindful habits",
                 style = MaterialTheme.typography.bodyLarge,
                 color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f),
                 textAlign = TextAlign.Center
