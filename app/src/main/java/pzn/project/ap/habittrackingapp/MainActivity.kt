@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
@@ -460,97 +461,109 @@ fun RegisterForm() {
 @Composable
 fun HomeScreen(onLogout: () -> Unit) {
     var selectedTab by remember { mutableStateOf(0) }
-    
-    Scaffold(
-        topBar = {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(
-                        brush = Brush.linearGradient(
-                            colors = listOf(
-                                Color(0xFFFF8A65), // Light orange
-                                Color(0xFFFF7043), // Medium orange
-                                Color(0xFFFF5722)  // Deep orange
+    var showSideMenu by remember { mutableStateOf(false) }
+
+    Box(modifier = Modifier.fillMaxSize()) {
+        Scaffold(
+            topBar = {
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(
+                            brush = Brush.linearGradient(
+                                colors = listOf(
+                                    Color(0xFFFF8A65), // Light orange
+                                    Color(0xFFFF7043), // Medium orange
+                                    Color(0xFFFF5722)  // Deep orange
+                                )
                             )
                         )
+                ) {
+                    TopAppBar(
+                        title = { }, // Empty title to maintain structure
+                        navigationIcon = {
+                            IconButton(onClick = { showSideMenu = true }) {
+                                Icon(
+                                    imageVector = Icons.Default.Menu,
+                                    contentDescription = "Menu",
+                                    tint = Color.White
+                                )
+                            }
+                        },
+                        actions = {
+                            IconButton(onClick = { /* TODO: Show notifications */ }) {
+                                Icon(
+                                    imageVector = Icons.Default.Notifications,
+                                    contentDescription = "Notifications",
+                                    tint = Color.White
+                                )
+                            }
+                            IconButton(onClick = { /* TODO: Show account options */ }) {
+                                Icon(
+                                    imageVector = Icons.Default.Person,
+                                    contentDescription = "Account",
+                                    tint = Color.White
+                                )
+                            }
+                        },
+                        colors = TopAppBarDefaults.topAppBarColors(
+                            containerColor = Color.Transparent
+                        )
                     )
-            ) {
-                TopAppBar(
-                    title = { }, // Empty title to maintain structure
-                    navigationIcon = {
-                        IconButton(onClick = { /* TODO: Open menu */ }) {
-                            Icon(
-                                imageVector = Icons.Default.Menu,
-                                contentDescription = "Menu",
-                                tint = Color.White
-                            )
-                        }
-                    },
-                    actions = {
-                        IconButton(onClick = { /* TODO: Show notifications */ }) {
-                            Icon(
-                                imageVector = Icons.Default.Notifications,
-                                contentDescription = "Notifications",
-                                tint = Color.White
-                            )
-                        }
-                        IconButton(onClick = { /* TODO: Show account options */ }) {
-                            Icon(
-                                imageVector = Icons.Default.Person,
-                                contentDescription = "Account",
-                                tint = Color.White
-                            )
-                        }
-                    },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color.Transparent
+                }
+            },
+            bottomBar = {
+                NavigationBar(
+                    containerColor = Color.White,
+                    contentColor = MaterialTheme.colorScheme.primary
+                ) {
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.Home, contentDescription = null) },
+                        label = { Text("Home") },
+                        selected = selectedTab == 0,
+                        onClick = { selectedTab = 0 }
                     )
-                )
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.List, contentDescription = null) },
+                        label = { Text("Habits") },
+                        selected = selectedTab == 1,
+                        onClick = { selectedTab = 1 }
+                    )
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.Info, contentDescription = null) },
+                        label = { Text("Progress") },
+                        selected = selectedTab == 2,
+                        onClick = { selectedTab = 2 }
+                    )
+                    NavigationBarItem(
+                        icon = { Icon(Icons.Default.Settings, contentDescription = null) },
+                        label = { Text("Settings") },
+                        selected = selectedTab == 3,
+                        onClick = { selectedTab = 3 }
+                    )
+                }
             }
-        },
-        bottomBar = {
-            NavigationBar {
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.Home, contentDescription = "Home") },
-                    label = { Text("Home") },
-                    selected = selectedTab == 0,
-                    onClick = { selectedTab = 0 }
-                )
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.List, contentDescription = "Habits") },
-                    label = { Text("Habits") },
-                    selected = selectedTab == 1,
-                    onClick = { selectedTab = 1 }
-                )
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.Info, contentDescription = "Progress") },
-                    label = { Text("Progress") },
-                    selected = selectedTab == 2,
-                    onClick = { selectedTab = 2 }
-                )
-                NavigationBarItem(
-                    icon = { Icon(Icons.Default.Settings, contentDescription = "Settings") },
-                    label = { Text("Settings") },
-                    selected = selectedTab == 3,
-                    onClick = { selectedTab = 3 }
-                )
+        ) { paddingValues ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddingValues)
+            ) {
+                when (selectedTab) {
+                    0 -> HomeTab()
+                    1 -> HabitsTab()
+                    2 -> ProgressTab()
+                    3 -> SettingsTab(onLogout)
+                }
             }
         }
-    ) { paddingValues ->
-        // Main content area
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddingValues)
-                .background(MaterialTheme.colorScheme.background)
-        ) {
-            when (selectedTab) {
-                0 -> HomeTab()
-                1 -> HabitsTab()
-                2 -> ProgressTab()
-                3 -> SettingsTab(onLogout = onLogout)
-            }
+
+        // Side Menu Panel
+        if (showSideMenu) {
+            SideMenuPanel(
+                onDismiss = { showSideMenu = false },
+                onLogout = onLogout
+            )
         }
     }
 }
@@ -655,6 +668,94 @@ fun HomeTab() {
             )
         }
     }
+}
+
+@Composable
+fun HabitsTab() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp)
+    ) {
+        Text(
+            text = "Your Habits",
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        Text(
+            text = "No habits added yet. Start by adding your first habit!",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+        )
+    }
+}
+
+@Composable
+fun ProgressTab() {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp)
+    ) {
+        Text(
+            text = "Progress",
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        Text(
+            text = "Track your habit progress here",
+            style = MaterialTheme.typography.bodyMedium,
+            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
+        )
+    }
+}
+
+@Composable
+fun SettingsTab(onLogout: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(24.dp)
+    ) {
+        Text(
+            text = "Settings",
+            style = MaterialTheme.typography.headlineMedium,
+            color = MaterialTheme.colorScheme.onBackground
+        )
+        
+        Spacer(modifier = Modifier.height(32.dp))
+        
+        Button(
+            onClick = onLogout,
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(56.dp),
+            shape = RoundedCornerShape(16.dp),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = MaterialTheme.colorScheme.error
+            )
+        ) {
+            Icon(
+                imageVector = Icons.Default.ExitToApp,
+                contentDescription = null,
+                modifier = Modifier.size(24.dp)
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text("Logout")
+        }
+    }
+}
+
+// Helper function to get current date
+fun getCurrentDate(): String {
+    val dateFormat = java.text.SimpleDateFormat("MMM dd, yyyy", java.util.Locale.getDefault())
+    return dateFormat.format(java.util.Date())
 }
 
 @Composable
@@ -1441,95 +1542,298 @@ fun EnhancedAddHabitDialog(onDismiss: () -> Unit, onHabitAdded: () -> Unit) {
     )
 }
 
-// Helper function to get current date
-fun getCurrentDate(): String {
-    val dateFormat = java.text.SimpleDateFormat("MMM dd, yyyy", java.util.Locale.getDefault())
-    return dateFormat.format(java.util.Date())
-}
-
 @Composable
-fun HabitsTab() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp)
-    ) {
-        Text(
-            text = "Your Habits",
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-        
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        Text(
-            text = "No habits added yet. Start by adding your first habit!",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
-        )
-    }
-}
-
-@Composable
-fun ProgressTab() {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp)
-    ) {
-        Text(
-            text = "Progress",
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-        
-        Spacer(modifier = Modifier.height(16.dp))
-        
-        Text(
-            text = "Track your habit progress here",
-            style = MaterialTheme.typography.bodyMedium,
-            color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.7f)
-        )
-    }
-}
-
-@Composable
-fun SettingsTab(onLogout: () -> Unit) {
-    Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(24.dp)
-    ) {
-        Text(
-            text = "Settings",
-            style = MaterialTheme.typography.headlineMedium,
-            color = MaterialTheme.colorScheme.onBackground
-        )
-        
-        Spacer(modifier = Modifier.height(32.dp))
-        
-        Button(
-            onClick = onLogout,
+fun SideMenuPanel(onDismiss: () -> Unit, onLogout: () -> Unit) {
+    Box(modifier = Modifier.fillMaxSize()) {
+        // Backdrop
+        Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .height(56.dp),
-            shape = RoundedCornerShape(16.dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = MaterialTheme.colorScheme.error
-            )
+                .fillMaxSize()
+                .background(Color.Black.copy(alpha = 0.5f))
+                .clickable { onDismiss() }
+        )
+        
+        // Side Menu Content
+        Box(
+            modifier = Modifier
+                .fillMaxHeight()
+                .width(300.dp)
+                .background(
+                    brush = Brush.verticalGradient(
+                        colors = listOf(
+                            Color(0xFF1E293B),
+                            Color(0xFF334155),
+                            Color(0xFF475569)
+                        )
+                    )
+                )
+                .padding(24.dp)
         ) {
-            Icon(
-                imageVector = Icons.Default.ExitToApp,
-                contentDescription = null,
-                modifier = Modifier.size(24.dp)
-            )
-            Spacer(modifier = Modifier.width(8.dp))
-            Text("Logout")
+            Column(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                // Header Section
+                SideMenuHeader()
+                
+                Spacer(modifier = Modifier.height(32.dp))
+                
+                // Menu Items
+                SideMenuItem(
+                    icon = Icons.Default.Home,
+                    title = "Dashboard",
+                    subtitle = "View your progress",
+                    onClick = { /* TODO: Navigate to dashboard */ }
+                )
+                
+                SideMenuItem(
+                    icon = Icons.Default.List,
+                    title = "My Habits",
+                    subtitle = "Manage your habits",
+                    onClick = { /* TODO: Navigate to habits */ }
+                )
+                
+                SideMenuItem(
+                    icon = Icons.Default.Star,
+                    title = "Achievements",
+                    subtitle = "View your badges",
+                    onClick = { /* TODO: Navigate to achievements */ }
+                )
+                
+                SideMenuItem(
+                    icon = Icons.Default.Info,
+                    title = "Analytics",
+                    subtitle = "Detailed insights",
+                    onClick = { /* TODO: Navigate to analytics */ }
+                )
+                
+                SideMenuItem(
+                    icon = Icons.Default.DateRange,
+                    title = "Calendar",
+                    subtitle = "Track your schedule",
+                    onClick = { /* TODO: Navigate to calendar */ }
+                )
+                
+                SideMenuItem(
+                    icon = Icons.Default.Notifications,
+                    title = "Reminders",
+                    subtitle = "Manage notifications",
+                    onClick = { /* TODO: Navigate to reminders */ }
+                )
+                
+                Spacer(modifier = Modifier.weight(1f))
+                
+                // Bottom Section
+                SideMenuBottomSection(onLogout)
+            }
         }
     }
 }
 
-@Preview(showBackground = true)
+@Composable
+fun SideMenuHeader() {
+    Column(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        // Profile Section
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Box(
+                modifier = Modifier
+                    .size(60.dp)
+                    .background(
+                        brush = Brush.linearGradient(
+                            colors = listOf(
+                                Color(0xFFFF8A65),
+                                Color(0xFFFF5722)
+                            )
+                        ),
+                        shape = CircleShape
+                    ),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = null,
+                    modifier = Modifier.size(32.dp),
+                    tint = Color.White
+                )
+            }
+            
+            Spacer(modifier = Modifier.width(16.dp))
+            
+            Column {
+                Text(
+                    text = "John Doe",
+                    style = MaterialTheme.typography.titleLarge,
+                    color = Color.White,
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+                )
+                
+                Text(
+                    text = "Habit Tracker Pro",
+                    style = MaterialTheme.typography.bodyMedium,
+                    color = Color.White.copy(alpha = 0.8f)
+                )
+            }
+        }
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        // Stats Row
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            SideMenuStat("12", "Habits")
+            SideMenuStat("85%", "Success")
+            SideMenuStat("15", "Streak")
+        }
+    }
+}
+
+@Composable
+fun SideMenuStat(value: String, label: String) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text(
+            text = value,
+            style = MaterialTheme.typography.titleLarge,
+            color = Color.White,
+            fontWeight = androidx.compose.ui.text.font.FontWeight.Bold
+        )
+        
+        Text(
+            text = label,
+            style = MaterialTheme.typography.bodySmall,
+            color = Color.White.copy(alpha = 0.7f)
+        )
+    }
+}
+
+@Composable
+fun SideMenuItem(
+    icon: ImageVector,
+    title: String,
+    subtitle: String,
+    onClick: () -> Unit
+) {
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 4.dp)
+            .clickable { onClick() },
+        colors = CardDefaults.cardColors(
+            containerColor = Color.Transparent
+        ),
+        elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                modifier = Modifier.size(24.dp),
+                tint = Color.White.copy(alpha = 0.9f)
+            )
+            
+            Spacer(modifier = Modifier.width(16.dp))
+            
+            Column(
+                modifier = Modifier.weight(1f)
+            ) {
+                Text(
+                    text = title,
+                    style = MaterialTheme.typography.bodyLarge,
+                    color = Color.White,
+                    fontWeight = androidx.compose.ui.text.font.FontWeight.Medium
+                )
+                
+                Text(
+                    text = subtitle,
+                    style = MaterialTheme.typography.bodySmall,
+                    color = Color.White.copy(alpha = 0.7f)
+                )
+            }
+            
+            Icon(
+                imageVector = Icons.Default.ArrowForward,
+                contentDescription = null,
+                modifier = Modifier.size(20.dp),
+                tint = Color.White.copy(alpha = 0.6f)
+            )
+        }
+    }
+}
+
+@Composable
+fun SideMenuBottomSection(onLogout: () -> Unit) {
+    Column(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Divider(
+            color = Color.White.copy(alpha = 0.2f),
+            thickness = 1.dp
+        )
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        // Settings and Help
+        SideMenuItem(
+            icon = Icons.Default.Settings,
+            title = "Settings",
+            subtitle = "App preferences",
+            onClick = { /* TODO: Navigate to settings */ }
+        )
+        
+        SideMenuItem(
+            icon = Icons.Default.Info,
+            title = "Help & Support",
+            subtitle = "Get assistance",
+            onClick = { /* TODO: Navigate to help */ }
+        )
+        
+        SideMenuItem(
+            icon = Icons.Default.Info,
+            title = "About",
+            subtitle = "App information",
+            onClick = { /* TODO: Navigate to about */ }
+        )
+        
+        Spacer(modifier = Modifier.height(16.dp))
+        
+        // Logout Button
+        Button(
+            onClick = onLogout,
+            modifier = Modifier.fillMaxWidth(),
+            colors = ButtonDefaults.buttonColors(
+                containerColor = Color(0xFFEF4444)
+            ),
+            shape = RoundedCornerShape(12.dp)
+        ) {
+            Icon(
+                imageVector = Icons.Default.ExitToApp,
+                contentDescription = null,
+                modifier = Modifier.size(20.dp)
+            )
+            
+            Spacer(modifier = Modifier.width(8.dp))
+            
+            Text(
+                text = "Logout",
+                style = MaterialTheme.typography.bodyLarge,
+                fontWeight = androidx.compose.ui.text.font.FontWeight.Medium
+            )
+        }
+    }
+}
+
 @Composable
 fun WelcomeScreenPreview() {
     HabitTrackingAppTheme {
@@ -1537,7 +1841,6 @@ fun WelcomeScreenPreview() {
     }
 }
 
-@Preview(showBackground = true)
 @Composable
 fun AuthScreenPreview() {
     HabitTrackingAppTheme {
